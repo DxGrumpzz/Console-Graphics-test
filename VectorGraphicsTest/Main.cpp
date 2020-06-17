@@ -1,5 +1,6 @@
 ﻿#include <Windows.h>
 #include <iostream>
+#include <string>
 #include <chrono>
 
 
@@ -9,7 +10,7 @@ class ConsoleEngine
 
 public:
 
-    const wchar_t PIXEL_CHARACTER = L'█';
+    static constexpr wchar_t PIXEL_CHARACTER = L'█';
 
 
 private:
@@ -41,8 +42,8 @@ public:
         WHITE = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
     };
 
-    const int ConsoleWindowWidth = 150;
-    const int ConsoleWindowHeight = 100;
+    const int ConsoleWindowWidth;
+    const int ConsoleWindowHeight;
 
     CHAR_INFO* ScreenBuffer;
 
@@ -52,7 +53,8 @@ public:
 public:
 
     ConsoleEngine(GameLoopCallback gameLoop,
-                  int consoleWindowWidth = 150, int consoleWindowHeight = 100) :
+                  int consoleWindowWidth = 150,
+                  int consoleWindowHeight = 100) :
         _consoleOutputHandle(NULL),
         _consoleHWND(NULL),
         _consoleWindowRect({ 0 }),
@@ -98,7 +100,7 @@ public:
 
 
         SetConsoleFont(_consoleOutputHandle);
-        
+
         _consoleWindowRect = { 0, 0, static_cast<short>(ConsoleWindowWidth - 1), static_cast<short>(ConsoleWindowHeight - 1) };
 
         SetConsoleWindowInfo(_consoleOutputHandle, TRUE, &_consoleWindowRect);
@@ -111,16 +113,21 @@ public:
 
     void Run()
     {
-        std::chrono::steady_clock::time_point tp1 = std::chrono::high_resolution_clock::now();
-        std::chrono::steady_clock::time_point tp2;
+        if (!GameLoop)
+            return;
 
+        std::chrono::system_clock::time_point timePoint1 = std::chrono::system_clock::now();
+        std::chrono::system_clock::time_point tp2;
+
+        DWORD written = 0;
         while (1)
         {
-            tp2 = std::chrono::high_resolution_clock::now();
-            
-            std::chrono::duration<long double> elapsedTime = tp2 - tp1;
+            tp2 = std::chrono::system_clock::now();
 
-            tp1 = tp2;
+            std::chrono::duration<long double> elapsedTime = tp2 - timePoint1;
+
+            timePoint1 = tp2;
+
 
             memset(ScreenBuffer, 0, sizeof(CHAR_INFO) * ConsoleWindowWidth * ConsoleWindowHeight);
 
@@ -128,17 +135,31 @@ public:
 
             WriteConsoleOutputW(_consoleOutputHandle, ScreenBuffer, { (short)ConsoleWindowWidth, (short)ConsoleWindowHeight }, { 0,0 }, &_consoleWindowRect);
         };
-
     };
 
 
-    void SetConsolePixel(int x, int y, int width, ConsoleColour pixelColour, CHAR_INFO* screenBuffer)
+    void WriteText(int x, int y, const wchar_t* text, ConsoleColour textColor = ConsoleColour::WHITE)
     {
-        CHAR_INFO& pixel = screenBuffer[x + width * y];
+        size_t textLength = wcslen(text);
 
-        pixel.Char.UnicodeChar = PIXEL_CHARACTER;
-        pixel.Attributes = static_cast<WORD>(pixelColour);
+        int startingX = x;
+
+        int textIndex = 0;
+        for (size_t a = 0; a < textLength; a++)
+        {
+            if (text[textIndex] == L'\n')
+            {
+                y++;
+                textIndex++;
+                x = startingX;
+                a++;
+            };
+
+            SetCharacter(x++, y, text[textIndex], textColor);
+            textIndex++;
+        };
     };
+
 
     void SetConsolePixel(int x, int y, ConsoleColour pixelColour)
     {
@@ -149,6 +170,14 @@ public:
     };
 
 
+    void SetCharacter(int x, int y, wchar_t character, ConsoleColour characterColour = ConsoleColour::WHITE)
+    {
+        CHAR_INFO& pixel = ScreenBuffer[x + ConsoleWindowWidth * y];
+
+        pixel.Char.UnicodeChar = character;
+        pixel.Attributes = static_cast<WORD>(characterColour);
+    };
+
 private:
 
     void SetConsoleFont(HANDLE _consoleOutputHandle)
@@ -158,7 +187,7 @@ private:
 
         consoleFontInfo.nFont = 0;
 
-        consoleFontInfo.dwFontSize = { 6, 6 };
+        consoleFontInfo.dwFontSize = { 10, 10 };
 
         consoleFontInfo.FontFamily = FF_DONTCARE;
         consoleFontInfo.FontWeight = FW_NORMAL;
@@ -199,27 +228,35 @@ private:
 
         SetConsoleCursorInfo(_consoleOutputHandle, &info);
     };
+
+
+    CHAR_INFO* GetPixelAddress(int x, int y)
+    {
+        return &ScreenBuffer[x + ConsoleWindowWidth * y];
+    };
+
 };
 
 
 
-int consoleWindowWidh = 150;
-int consoleWindowHeight = 100;
+int consoleWindowWidh = 50;
+int consoleWindowHeight = 50;
 
 
 float playerX = consoleWindowWidh / 2;
 float playerY = consoleWindowHeight / 2;
 
 
-const float accelerationRate = 0.09f;
-const float decelerationRate = 0.001f;
+const float accelerationRate = 0.00001;
+const float decelerationRate = 0.000001f;
 
 
 float velocityX = 0.0;
 float velocityY = 0.0;
 
 
-const float maxVelocity = 0.15f;
+const float maxVelocity = 200.0f;
+
 
 
 bool GameLoop(long double deltaTime, ConsoleEngine& consoleEngine)
@@ -232,17 +269,17 @@ bool GameLoop(long double deltaTime, ConsoleEngine& consoleEngine)
 
     if (GetAsyncKeyState(VK_DOWN))
     {
-        velocityY += accelerationRate;
+        velocityY += accelerationRate ;
     };
 
     if (GetAsyncKeyState(VK_LEFT))
     {
-        velocityX -= accelerationRate;
+        velocityX -= accelerationRate ;
     };
 
     if (GetAsyncKeyState(VK_RIGHT))
     {
-        velocityX += accelerationRate;
+        velocityX += accelerationRate ;
     };
 
 
@@ -328,158 +365,43 @@ bool GameLoop(long double deltaTime, ConsoleEngine& consoleEngine)
 
     consoleEngine.SetConsolePixel(playerX, playerY, ConsoleEngine::ConsoleColour::RED);
 
+    std::wstring text;
+    text.append(L"Player X: ");
+    text.append(std::to_wstring(playerX));
+
+    text.append(L"\n");
+
+    text.append(L"Player Y: ");
+    text.append(std::to_wstring(playerY));
+
+    consoleEngine.WriteText(0, 0, text.c_str(), ConsoleEngine::ConsoleColour::RED);
+    text.clear();
+
+    text.append(L"Velocity X: ");
+    text.append(std::to_wstring(velocityX));
+
+    text.append(L"\n");
+
+    text.append(L"Velocity Y: ");
+    text.append(std::to_wstring(velocityY));
+
+    consoleEngine.WriteText(0, 2, text.c_str(), ConsoleEngine::ConsoleColour::BLUE);
+
     return true;
 };
 
 
 
+
 int main()
 {
-    ConsoleEngine* consoleEngine = new ConsoleEngine(GameLoop);
+    ConsoleEngine* consoleEngine = new ConsoleEngine(GameLoop, consoleWindowWidh, consoleWindowHeight);
 
     consoleEngine->BuildEngine();
 
     consoleEngine->Run();
 
+
     delete consoleEngine;
     consoleEngine = nullptr;
-
-    /*
-    DWORD writtenAttributesCount = 0;
-    DWORD writtenCharactersCount = 0;
-
-
-    float playerX = consoleWindowWidth / 2;
-    float playerY = consoleWindowHeight / 2;
-
-    const float accelerationRate = 0.09f;
-    const float decelerationRate = 0.001f;
-
-    bool isAccelerating = true;
-
-    float velocityX = 0.0;
-    float velocityY = 0.0;
-
-    const float maxVelocity = 0.15f;
-
-
-
-    while (1)
-    {
-        memset(screenBuffer, 0, sizeof(CHAR_INFO) * consoleWindowWidth * consoleWindowHeight);
-
-        if (GetAsyncKeyState(VK_UP))
-        {
-            velocityY -= accelerationRate;
-        };
-
-        if (GetAsyncKeyState(VK_DOWN))
-        {
-            velocityY += accelerationRate;
-        };
-
-        if (GetAsyncKeyState(VK_LEFT))
-        {
-            velocityX -= accelerationRate;
-
-        };
-
-        if (GetAsyncKeyState(VK_RIGHT))
-        {
-            velocityX += accelerationRate;
-        };
-
-
-
-        if ((playerX + velocityX) > consoleWindowWidth - 0.9)
-        {
-            playerX = consoleWindowWidth - 0.9;
-            velocityX = 0.0f;
-        };
-
-        if ((playerX - velocityX) < 0)
-        {
-            playerX = 0.9;
-            velocityX = 0.0f;
-        };
-
-
-        if ((playerY + velocityY) > consoleWindowHeight - 0.9)
-        {
-            playerY = consoleWindowHeight - 0.9;
-            velocityY = 0.0f;
-        };
-
-        if ((playerY - velocityY) < 0)
-        {
-            playerY = 0.9;
-            velocityY = 0.0f;
-        };
-
-
-
-        playerX += velocityX;
-        playerY += velocityY;
-
-
-
-
-        if (velocityX > maxVelocity)
-            velocityX = maxVelocity;
-
-        if (velocityX < (-maxVelocity))
-            velocityX = -maxVelocity;
-
-        if (velocityY > maxVelocity)
-            velocityY = maxVelocity;
-
-        if (velocityY < (-maxVelocity))
-            velocityY = -maxVelocity;
-
-
-
-
-        if (velocityX > 0.0f)
-        {
-            velocityX -= decelerationRate;
-
-            if (velocityX < 0.0f)
-                velocityX = 0.0f;
-        }
-        else if (velocityX < 0.0f)
-        {
-            velocityX += decelerationRate;
-
-            if (velocityX > 0.0f)
-                velocityX = 0.0f;
-        };
-
-
-        if (velocityY > 0.0f)
-        {
-            velocityY -= decelerationRate;
-
-            if (velocityY < 0.0f)
-                velocityY = 0.0f;
-        }
-        else if (velocityY < 0.0f)
-        {
-            velocityY += decelerationRate;
-
-            if (velocityY > 0.0f)
-                velocityY = 0.0f;
-        };
-
-
-        SetConsolePixel(playerX, playerY, consoleWindowWidth, ConsoleColour::RED, screenBuffer);
-
-
-        wchar_t s[256] = { 0 };
-        swprintf_s(s, 256, L"Velociy X: %3.3f, Velociy Y: %3.3f, Player X: %3.3f, Player Y: %3.3f", velocityX, velocityY, playerX, playerY);
-
-        SetConsoleTitleW(s);
-
-        WriteConsoleOutputW(consoleOutputHandle, screenBuffer, { (short)consoleWindowWidth, (short)consoleWindowHeight }, { 0,0 }, &consoleWindowRect);
-    };
-    */
 };
