@@ -2,7 +2,6 @@
 #include <iostream>
 
 
-
 constexpr wchar_t PIXEL_CHARACTER = L'█';
 
 
@@ -34,7 +33,7 @@ void SetConsoleFont(HANDLE consoleOutputHandle)
 
     consoleFontInfo.nFont = 0;
 
-    consoleFontInfo.dwFontSize = { 4, 5 };
+    consoleFontInfo.dwFontSize = { 6, 6 };
 
     consoleFontInfo.FontFamily = FF_DONTCARE;
     consoleFontInfo.FontWeight = FW_NORMAL;
@@ -77,13 +76,15 @@ void HideConsoleCursor(HANDLE consoleOutputHandle)
 };
 
 
+
 void SetConsolePixel(int x, int y, int width, ConsoleColour pixelColour, CHAR_INFO* screenBuffer)
 {
-    CHAR_INFO& pixel = screenBuffer[x * width + y];
+    CHAR_INFO& pixel = screenBuffer[x + width * y];
 
     pixel.Char.UnicodeChar = PIXEL_CHARACTER;
     pixel.Attributes = static_cast<WORD>(pixelColour);
 };
+
 
 
 int main()
@@ -96,7 +97,7 @@ int main()
     HWND consoleHWND = GetConsoleWindow();
 
 
-    const int consoleWindowWidth = 100;
+    const int consoleWindowWidth = 150;
     const int consoleWindowHeight = 100;
 
     SMALL_RECT consoleWindowRect = { 0, 0, 1, 1 };
@@ -131,7 +132,16 @@ int main()
     float playerX = consoleWindowWidth / 2;
     float playerY = consoleWindowHeight / 2;
 
-    float playerSpeed = 0.05;
+    const float accelerationRate = 0.09f;
+    const float decelerationRate = 0.001f;
+
+    bool isAccelerating = true;
+
+    float velocityX = 0.0;
+    float velocityY = 0.0;
+
+    const float maxVelocity = 0.15f;
+
 
 
     while (1)
@@ -139,32 +149,56 @@ int main()
         memset(screenBuffer, 0, sizeof(CHAR_INFO) * consoleWindowWidth * consoleWindowHeight);
 
 
-        if (GetAsyncKeyState(VK_UP))
-        {
-            if ((playerY - playerSpeed) > 0.f)
-                playerY -= playerSpeed;
-        };
-
-        if (GetAsyncKeyState(VK_DOWN))
-        {
-            if ((playerY + playerSpeed) < consoleWindowHeight)
-                playerY += playerSpeed;
-        };
 
         if (GetAsyncKeyState(VK_LEFT))
         {
-            if ((playerX - playerSpeed) > 0.f)
-                playerX -= playerSpeed;
+            velocityX -= accelerationRate;
+
         };
 
         if (GetAsyncKeyState(VK_RIGHT))
         {
-            if ((playerX + playerSpeed) < consoleWindowWidth)
-                playerX += playerSpeed;
+            velocityX += accelerationRate;
         };
+
+
+        if ((playerX + velocityX) > consoleWindowWidth - 0.9)
+        {
+            playerX = consoleWindowWidth - 0.9;
+            velocityX = 0.0f;
+        };
+
+        if ((playerX - velocityX) < 0)
+        {
+            playerX = 0.9;
+            velocityX = 0.0f;
+        };
+
+
+        playerX += velocityX;
+
+
+
+
+        if (velocityX > maxVelocity)
+            velocityX = maxVelocity;
+
+        if (velocityX < (-maxVelocity))
+            velocityX = -maxVelocity;
+
+        if (velocityX > 0.0f)
+            velocityX -= decelerationRate;
+        else if (velocityX < 0.0f)
+            velocityX += decelerationRate;
+
 
         SetConsolePixel(playerX, playerY, consoleWindowWidth, ConsoleColour::RED, screenBuffer);
 
+
+        wchar_t s[256] = { 0 };
+        swprintf_s(s, 256, L"Velociy X: %3.3f, Velociy Y: %3.3f, Player X: %3.3f, Player Y: %3.3f", velocityX, velocityY, playerX, playerY);
+
+        SetConsoleTitleW(s);
 
         WriteConsoleOutputW(consoleOutputHandle, screenBuffer, { (short)consoleWindowWidth, (short)consoleWindowHeight }, { 0,0 }, &consoleWindowRect);
     };
