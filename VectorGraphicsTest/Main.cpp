@@ -148,7 +148,15 @@ int main()
     {
         memset(screenBuffer, 0, sizeof(CHAR_INFO) * consoleWindowWidth * consoleWindowHeight);
 
+        if (GetAsyncKeyState(VK_UP))
+        {
+            velocityY -= accelerationRate;
+        };
 
+        if (GetAsyncKeyState(VK_DOWN))
+        {
+            velocityY += accelerationRate;
+        };
 
         if (GetAsyncKeyState(VK_LEFT))
         {
@@ -160,6 +168,7 @@ int main()
         {
             velocityX += accelerationRate;
         };
+
 
 
         if ((playerX + velocityX) > consoleWindowWidth - 0.9)
@@ -175,7 +184,22 @@ int main()
         };
 
 
+        if ((playerY + velocityY) > consoleWindowHeight - 0.9)
+        {
+            playerY = consoleWindowHeight - 0.9;
+            velocityY = 0.0f;
+        };
+
+        if ((playerY - velocityY) < 0)
+        {
+            playerY = 0.9;
+            velocityY = 0.0f;
+        };
+
+
+
         playerX += velocityX;
+        playerY += velocityY;
 
 
 
@@ -186,10 +210,45 @@ int main()
         if (velocityX < (-maxVelocity))
             velocityX = -maxVelocity;
 
+        if (velocityY > maxVelocity)
+            velocityY = maxVelocity;
+
+        if (velocityY < (-maxVelocity))
+            velocityY = -maxVelocity;
+
+
+
+
         if (velocityX > 0.0f)
+        {
             velocityX -= decelerationRate;
+
+            if (velocityX < 0.0f)
+                velocityX = 0.0f;
+        }
         else if (velocityX < 0.0f)
+        {
             velocityX += decelerationRate;
+
+            if (velocityX > 0.0f)
+                velocityX = 0.0f;
+        };
+
+
+        if (velocityY > 0.0f)
+        {
+            velocityY -= decelerationRate;
+
+            if (velocityY < 0.0f)
+                velocityY = 0.0f;
+        }
+        else if (velocityY < 0.0f)
+        {
+            velocityY += decelerationRate;
+
+            if (velocityY > 0.0f)
+                velocityY = 0.0f;
+        };
 
 
         SetConsolePixel(playerX, playerY, consoleWindowWidth, ConsoleColour::RED, screenBuffer);
