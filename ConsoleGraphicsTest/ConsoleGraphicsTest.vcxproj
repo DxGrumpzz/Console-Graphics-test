@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{f18a74ea-f59e-41f9-a434-8cdd8fdbe8a6}</ProjectGuid>
-    <RootNamespace>VectorGraphicsTest</RootNamespace>
+    <RootNamespace>ConsoleGraphicsTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

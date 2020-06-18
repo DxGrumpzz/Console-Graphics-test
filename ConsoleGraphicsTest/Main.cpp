@@ -151,7 +151,7 @@ public:
 
         CONSOLE_SCREEN_BUFFER_INFO s = { 0 };
         GetConsoleScreenBufferInfo(_consoleOutputHandle, &s);
-        
+
         // Center the console on the monitor
         CenterConsoleWindow(_consoleHWND, actualConsoleWindowSize.X + ConsoleWindowWidth, actualConsoleWindowSize.Y + ConsoleWindowHeight);
 
@@ -166,7 +166,7 @@ public:
     void Run()
     {
         // Check if a GameLoop function is defined
-        if (!GameLoop)
+        if (GameLoop == nullptr)
             return;
 
         // Time points, neccesarry to keep consistent movment when using velocity and such
@@ -362,11 +362,11 @@ int consoleWindowWidh = 50;
 int consoleWindowHeight = 50;
 
 
-float playerX = consoleWindowWidh / 2;
-float playerY = consoleWindowHeight / 2;
+float playerX = static_cast<float>(consoleWindowWidh / 2);
+float playerY = static_cast<float>(consoleWindowHeight / 2);
 
 
-const float accelerationRate = 0.00001;
+const float accelerationRate = 0.00001f;
 const float decelerationRate = 0.000001f;
 
 
@@ -402,29 +402,28 @@ bool GameLoop(long double deltaTime, ConsoleEngine& consoleEngine)
     };
 
 
-
-    if ((playerX + velocityX) > consoleEngine.ConsoleWindowWidth - 0.9)
+    if ((playerX + velocityX) > consoleEngine.ConsoleWindowWidth - 1)
     {
-        playerX = consoleEngine.ConsoleWindowWidth - 0.9;
+        playerX = static_cast<float>(consoleEngine.ConsoleWindowWidth - 1);
         velocityX = 0.0f;
     };
 
     if ((playerX - velocityX) < 0)
     {
-        playerX = 0.9;
+        playerX = 0.9f;
         velocityX = 0.0f;
     };
 
 
-    if ((playerY + velocityY) > consoleEngine.ConsoleWindowHeight - 0.9)
+    if ((playerY + velocityY) > consoleEngine.ConsoleWindowHeight - 1)
     {
-        playerY = consoleEngine.ConsoleWindowHeight - 0.9;
+        playerY = static_cast<float>(consoleEngine.ConsoleWindowHeight - 1);
         velocityY = 0.0f;
     };
 
     if ((playerY - velocityY) < 0)
     {
-        playerY = 0.9;
+        playerY = 0.9f;
         velocityY = 0.0f;
     };
 
@@ -482,7 +481,7 @@ bool GameLoop(long double deltaTime, ConsoleEngine& consoleEngine)
     };
 
 
-    consoleEngine.SetConsolePixel(playerX, playerY, ConsoleEngine::ConsoleColour::RED);
+    consoleEngine.SetConsolePixel(static_cast<int>(playerX), static_cast<int>(playerY), ConsoleEngine::ConsoleColour::RED);
 
     std::wstring text;
     text.append(L"Player X: ");
@@ -508,8 +507,6 @@ bool GameLoop(long double deltaTime, ConsoleEngine& consoleEngine)
 
     return true;
 };
-
-
 
 
 int main()
