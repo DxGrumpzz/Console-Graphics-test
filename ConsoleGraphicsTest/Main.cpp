@@ -86,11 +86,13 @@ void HandleInput(long float deltaTime, ConsoleEngine& consoleEngine)
 
 
 
-    if (mouse.LeftMouseButton == MouseKeyState::Pressed && mouseOverPlayer == true)
+    if (mouse.LeftMouseButton == MouseKeyState::Pressed &&
+        mouseOverPlayer == true)
     {
         playerX = mouse.X;
         playerY = mouse.Y;
     };
+
 
     if ((mouse.X >= playerX) &&
         (mouse.X < (playerX + PlayerWidth)) &&
@@ -105,28 +107,28 @@ void HandleInput(long float deltaTime, ConsoleEngine& consoleEngine)
 };
 
 
-void HandleCollisions(ConsoleEngine& consoleEngine)
+void HandleCollisions(float deltaTime, ConsoleEngine& consoleEngine)
 {
-    if ((playerX + velocityX) > consoleEngine.ConsoleWindowWidth - 1)
+    if (((playerX + PlayerWidth) + (velocityX * deltaTime)) > consoleEngine.ConsoleWindowWidth)
     {
-        playerX = static_cast<float>(consoleEngine.ConsoleWindowWidth - 1);
+        playerX = static_cast<float>(consoleEngine.ConsoleWindowWidth) - PlayerWidth;
         velocityX = 0.0f;
     };
 
-    if ((playerX - velocityX) < 0)
+    if ((playerX - (velocityX * deltaTime)) < 0)
     {
         playerX = 0.9f;
         velocityX = 0.0f;
     };
 
 
-    if ((playerY + velocityY) > consoleEngine.ConsoleWindowHeight - 1)
+    if (((playerY + PlayerHeight) + (velocityY * deltaTime)) > consoleEngine.ConsoleWindowHeight)
     {
-        playerY = static_cast<float>(consoleEngine.ConsoleWindowHeight - 1);
+        playerY = static_cast<float>(consoleEngine.ConsoleWindowHeight) - PlayerHeight;
         velocityY = 0.0f;
     };
 
-    if ((playerY - velocityY) < 0)
+    if ((playerY - (velocityY * deltaTime)) < 0)
     {
         playerY = 0.9f;
         velocityY = 0.0f;
@@ -311,7 +313,7 @@ bool GameLoop(float deltaTime, ConsoleEngine& consoleEngine)
     HandleInput(deltaTime, consoleEngine);
 
 
-    HandleCollisions(consoleEngine);
+    HandleCollisions(deltaTime, consoleEngine);
 
 
     HandleVelocity(deltaTime);
