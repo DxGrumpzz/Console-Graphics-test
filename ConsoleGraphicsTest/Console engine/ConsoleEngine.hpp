@@ -6,6 +6,24 @@
 #include <chrono>
 
 
+enum class MouseKeyState
+{
+    Released = 0,
+    Pressed = 1,
+};
+
+
+struct Mouse
+{
+    short X = 0;
+    short Y = 0;
+
+    MouseKeyState RightMouseButton;
+    MouseKeyState LeftMouseButton;
+};
+
+
+
 /// <summary>
 /// A simple class used to interact with the console's character buffer and treat it as a Pixel/screen buffer
 /// </summary>
@@ -15,7 +33,7 @@ class ConsoleEngine
     /// <summary>
     /// A typedef for a callback function that will be ran every frame
     /// </summary>
-    typedef bool (*GameLoopCallback)(long double deltaTime, ConsoleEngine& consoleEngine);
+    typedef bool (*GameLoopCallback)(float deltaTime, ConsoleEngine& consoleEngine);
 
 
 public:
@@ -34,6 +52,11 @@ private:
     HANDLE _consoleOutputHandle;
 
     /// <summary>
+    /// A handle to the console input buffer
+    /// </summary>
+    HANDLE _consoleInputHandle;
+
+    /// <summary>
     /// A window handle to the console's Host window
     /// </summary>
     HWND _consoleHWND;
@@ -42,6 +65,9 @@ private:
     /// A screen rectangle of the console's window
     /// </summary>
     SMALL_RECT _consoleWindowRect;
+
+
+    Mouse _mouse;
 
 
 public:
@@ -99,8 +125,12 @@ public:
                   int consoleWindowWidth = 150,
                   int consoleWindowHeight = 100) :
         _consoleOutputHandle(NULL),
+        _consoleInputHandle(NULL),
+
         _consoleHWND(NULL),
         _consoleWindowRect({ 0 }),
+
+        _mouse({ 0 }),
 
         ConsoleWindowWidth(consoleWindowWidth),
         ConsoleWindowHeight(consoleWindowHeight),
@@ -138,6 +168,7 @@ public:
 
         // Get the console's output handle
         _consoleOutputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+        _consoleInputHandle = GetStdHandle(STD_INPUT_HANDLE);
 
         // Get the console's window handle
         _consoleHWND = GetConsoleWindow();
@@ -162,6 +193,18 @@ public:
         CONSOLE_SCREEN_BUFFER_INFO s = { 0 };
         GetConsoleScreenBufferInfo(_consoleOutputHandle, &s);
 
+
+        SetWindowLongW(_consoleHWND, GWL_STYLE, GetWindowLong(_consoleHWND, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
+
+
+        DWORD previousMode;
+        /*GetConsoleMode(_consoleInputHandle, &previousMode);
+        SetConsoleMode(_consoleInputHandle, ENABLE_EXTENDED_FLAGS |
+                       (previousMode & ~ENABLE_QUICK_EDIT_MODE));*/
+
+        SetConsoleMode(_consoleInputHandle, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+
+
         // Center the console on the monitor
         CenterConsoleWindow(_consoleHWND, actualConsoleWindowSize.X + ConsoleWindowWidth, actualConsoleWindowSize.Y + ConsoleWindowHeight);
 
@@ -177,30 +220,38 @@ public:
     {
         // Check if a GameLoop function is defined
         if (GameLoop == nullptr)
+        {
+            throw std::exception("No GameLoop call back function is defined");
             return;
+        };
 
         // Time points, neccesarry to keep consistent movment when using velocity and such
-        std::chrono::system_clock::time_point timePoint1 = std::chrono::system_clock::now();
-        std::chrono::system_clock::time_point tp2;
+        std::chrono::steady_clock::time_point start;
+        std::chrono::steady_clock::time_point end;
+
+        std::chrono::duration<float > elapsed;
 
         while (1)
         {
-            tp2 = std::chrono::system_clock::now();
+            elapsed = end - start;
 
-            // Get elapsed time between frames
-            std::chrono::duration<long double> elapsedTime = tp2 - timePoint1;
-
-            timePoint1 = tp2;
+            start = std::chrono::steady_clock::now();
 
             // Clear the "frame" buffer
             memset(ScreenBuffer, 0, sizeof(CHAR_INFO) * ConsoleWindowWidth * ConsoleWindowHeight);
 
+            // Read any input events that occured
+            ReadConsoleEvents();
+
             // Run the game loop function
-            if (GameLoop(elapsedTime.count(), *this) == false)
+            if (GameLoop(elapsed.count(), *this) == false)
                 return;
 
             // Display the "frame"
             WriteConsoleOutputW(_consoleOutputHandle, ScreenBuffer, { (short)ConsoleWindowWidth, (short)ConsoleWindowHeight }, { 0,0 }, &_consoleWindowRect);
+
+
+            end = std::chrono::steady_clock::now();
         };
     };
 
@@ -212,7 +263,7 @@ public:
     /// <param name="y"> The text's y position </param>
     /// <param name="text"> The text to draw </param>
     /// <param name="textColor"> Which colour to draw the text </param>
-    void WriteText(int x, int y, const wchar_t* text, ConsoleColour textColor = ConsoleColour::WHITE)
+    void DrawConsoleText(int x, int y, const wchar_t* text, ConsoleColour textColor = ConsoleColour::WHITE)
     {
         // The length of the text
         size_t textLength = wcslen(text);
@@ -247,7 +298,7 @@ public:
             textIndex++;
         };
     };
-    
+
 
     /// <summary>
     /// "Activates" a single pixel on the consoles character buffer
@@ -284,7 +335,55 @@ public:
     };
 
 
+public:
+
+    const Mouse& GetMouse()
+    {
+        return _mouse;
+    };
+
+    std::pair<short, short> GetMousePosition()
+    {
+        return std::make_pair(_mouse.X, _mouse.Y);
+    };
+
+
 private:
+
+    void ReadConsoleEvents()
+    {
+        INPUT_RECORD inputEvents[32];
+
+        DWORD numberOfEvents = 0;
+
+        GetNumberOfConsoleInputEvents(_consoleInputHandle, &numberOfEvents);
+
+        if (numberOfEvents > 0)
+            ReadConsoleInputW(_consoleInputHandle, inputEvents, numberOfEvents, &numberOfEvents);
+
+        for (DWORD i = 0; i < numberOfEvents; i++)
+        {
+            if (inputEvents[i].EventType == MOUSE_EVENT)
+            {
+                MOUSE_EVENT_RECORD& mouseEvent = inputEvents[i].Event.MouseEvent;
+
+                _mouse.X = mouseEvent.dwMousePosition.X;
+                _mouse.Y = mouseEvent.dwMousePosition.Y;
+
+                if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+                    _mouse.LeftMouseButton = MouseKeyState::Pressed;
+                else
+                    _mouse.LeftMouseButton = MouseKeyState::Released;
+
+
+                if (mouseEvent.dwButtonState == RIGHTMOST_BUTTON_PRESSED)
+                    _mouse.RightMouseButton = MouseKeyState::Pressed;
+                else
+                    _mouse.RightMouseButton = MouseKeyState::Released;
+
+            };
+        };
+    };
 
     /// <summary>
     /// Sets a font for the console
