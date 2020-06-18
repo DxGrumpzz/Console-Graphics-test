@@ -3,4 +3,14 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Console engine">
+      <UniqueIdentifier>{2aa5a714-1998-4d07-9b64-405f3a2ac292}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ConsoleEngine.hpp">
+      <Filter>Console engine</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
