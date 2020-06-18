@@ -40,7 +40,7 @@ bool isFirstTimeShowHelp = true;
 bool toggleHelpKeyPressed = false;
 
 
-
+const float bounceForceFalloff = 7.0f;
 
 
 void HandleInput(long float deltaTime, ConsoleEngine& consoleEngine)
@@ -109,29 +109,40 @@ void HandleInput(long float deltaTime, ConsoleEngine& consoleEngine)
 
 void HandleCollisions(float deltaTime, ConsoleEngine& consoleEngine)
 {
-    if (((playerX + PlayerWidth) + (velocityX * deltaTime)) > consoleEngine.ConsoleWindowWidth)
+    // Right wall
+    if (((playerX + PlayerWidth) + (velocityX * deltaTime)) > consoleEngine.ConsoleWindowWidth + 1)
     {
         playerX = static_cast<float>(consoleEngine.ConsoleWindowWidth) - PlayerWidth;
-        velocityX = 0.0f;
+        
+        velocityX *= (-1);
+        velocityX += bounceForceFalloff;
     };
 
+    // Left wall
     if ((playerX - (velocityX * deltaTime)) < 0)
     {
         playerX = 0.9f;
-        velocityX = 0.0f;
+        
+        velocityX *= (-1);
+        velocityX -= bounceForceFalloff;
     };
 
-
-    if (((playerY + PlayerHeight) + (velocityY * deltaTime)) > consoleEngine.ConsoleWindowHeight)
+    // Bottom wall
+    if (((playerY + PlayerHeight) + (velocityY * deltaTime)) > consoleEngine.ConsoleWindowHeight + 1)
     {
         playerY = static_cast<float>(consoleEngine.ConsoleWindowHeight) - PlayerHeight;
-        velocityY = 0.0f;
+        
+        velocityY *= (-1);
+        velocityY += bounceForceFalloff;
     };
 
+    // Top wall
     if ((playerY - (velocityY * deltaTime)) < 0)
     {
         playerY = 0.9f;
-        velocityY = 0.0f;
+
+        velocityY *= (-1);
+        velocityY -= bounceForceFalloff;
     };
 
 }
