@@ -48,13 +48,30 @@ public:
     };
 
 
+    /// <summary>
+    /// Draws a line segment between 2 points
+    /// </summary>
+    /// <param name="x1"> The beginning x coordinate </param>
+    /// <param name="y1"> The beginning y coordinate </param>
+    /// <param name="x2"> The ending x coordinate </param>
+    /// <param name="y2"> The ending y coordinate </param>
+    /// <param name="lineColour"> The colour of th line </param>
     void DrawLine(float x1, float y1, float x2, float y2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
     {
+        // Comments on this algorithm will be lacking.
+        // Because I am too shite at mathematics to understand what's going on here
+
+
+        // Calculate the rise and run
+        // (Slope and Y-intercept)
         float rise = y2 - y1;
         float run = x2 - x1;
 
+        
+        // Check if the slope of the line is too low
         if (abs(rise) > abs(run))
         {
+            // Swap Y-coordinates without this, every part of the line under Y1 won't render
             if (y1 > y2)
             {
                 int tempX = x1;
@@ -65,8 +82,10 @@ public:
 
                 y1 = y2;
                 y2 = tempY;
-            }
+            };
 
+            // The line drawing equation is y = mx * b
+            // But in this case we turn it upside-down so we're able to render
 
             float w = (x2 - x1) / (y2 - y1);
             float p = x1 - w * y1;
@@ -104,30 +123,17 @@ public:
         };
     };
 
-    float x1 = _consoleEngine.ConsoleWindowWidth;
-    float y1 = _consoleEngine.ConsoleWindowHeight;
 
-    float x2 = _consoleEngine.ConsoleWindowWidth / 2; 
-    float y2 = _consoleEngine.ConsoleWindowHeight / 2;
+    void DrawLine(Vector2 point1, Vector2 point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
+    {
+        DrawLine(point1.X, point1.Y, point2.X, point2.y, lineColour);
+    };
+
 
 
     virtual void DrawScence(float deltaTime) override
     {
-        const Mouse& mouse = _consoleEngine.GetMouse();
 
-        if (mouse.LeftMouseButton == MouseKeyState::Pressed)
-        {
-            x1 = mouse.X;
-            y1 = mouse.Y;
-        }
-        else if (mouse.RightMouseButton == MouseKeyState::Pressed)
-        {
-            x2 = mouse.X;
-            y2 = mouse.Y;
-        };
-
-
-        DrawLine(x1, y1, x2, y2);
     };
 
 };
