@@ -74,6 +74,9 @@ private:
     /// </summary>
     float _fps = 0.0f;
 
+    short _fontWidth;
+    short _fontHeight;
+
 public:
 
     /// <summary>
@@ -126,8 +129,12 @@ public:
 public:
 
     ConsoleEngine(GameLoopCallback gameLoop,
+
                   int consoleWindowWidth = 150,
-                  int consoleWindowHeight = 100) :
+                  int consoleWindowHeight = 100,
+
+                  short fontWidth = 10,
+                  short fontHeight = 10) :
         _consoleOutputHandle(NULL),
         _consoleInputHandle(NULL),
 
@@ -135,6 +142,9 @@ public:
         _consoleWindowRect({ 0 }),
 
         _mouse({ 0 }),
+
+        _fontWidth(fontWidth),
+        _fontHeight(fontHeight),
 
         ConsoleWindowWidth(consoleWindowWidth),
         ConsoleWindowHeight(consoleWindowHeight),
@@ -385,6 +395,7 @@ private:
 
     void ReadConsoleEvents()
     {
+
         INPUT_RECORD inputEvents[32];
 
         DWORD numberOfEvents = 0;
@@ -416,6 +427,7 @@ private:
 
             };
         };
+
     };
 
     /// <summary>
@@ -431,7 +443,7 @@ private:
         consoleFontInfo.nFont = 0;
 
         // Set a font size 
-        consoleFontInfo.dwFontSize = { 10, 10 };
+        consoleFontInfo.dwFontSize = { _fontWidth, _fontHeight };
 
         // Use default font family and font weight
         consoleFontInfo.FontFamily = FF_DONTCARE;

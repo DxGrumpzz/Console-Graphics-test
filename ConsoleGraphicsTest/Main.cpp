@@ -4,13 +4,11 @@
 
 
 
-
 struct Vector2
 {
     float X = 0;
     float Y = 0;
 };
-
 
 
 int consoleWindowWidh = 50;
@@ -269,9 +267,14 @@ void DrawMousePosition(ConsoleEngine& consoleEngine, std::wstring& debugString)
 }
 
 
-void DrawFPS(ConsoleEngine& consoleEngine)
+void DrawFPS(ConsoleEngine& consoleEngine, std::wstring& debugString)
 {
+    debugString.append(L"\n");
 
+    debugString.append(L"FPS: ");
+    debugString.append(std::to_wstring(consoleEngine.GetFPS()));
+
+    debugString.append(L"\n");
 };
 
 
@@ -300,17 +303,13 @@ void Draw(ConsoleEngine& consoleEngine, float deltaTime)
         debugString.append(L"\n");
 
 
-        debugString.append(L"\n");
-
-        debugString.append(L"FPS: ");
-        debugString.append(std::to_wstring(consoleEngine.GetFPS()));
-
-        debugString.append(L"\n");
+        DrawFPS(consoleEngine, debugString);
 
 
         if (isFirstTimeShowHelp == true)
             debugString.append(L"Press F1 to toggle debug\n");
     };
+
 
     consoleEngine.DrawConsoleText(0, 0, debugString.c_str());
 };
