@@ -113,7 +113,7 @@ void HandleCollisions(float deltaTime, ConsoleEngine& consoleEngine)
     if (((playerX + PlayerWidth) + (velocityX * deltaTime)) > consoleEngine.ConsoleWindowWidth + 1)
     {
         playerX = static_cast<float>(consoleEngine.ConsoleWindowWidth) - PlayerWidth;
-        
+
         velocityX *= (-1);
         velocityX += bounceForceFalloff;
     };
@@ -122,7 +122,7 @@ void HandleCollisions(float deltaTime, ConsoleEngine& consoleEngine)
     if ((playerX - (velocityX * deltaTime)) < 0)
     {
         playerX = 0.9f;
-        
+
         velocityX *= (-1);
         velocityX -= bounceForceFalloff;
     };
@@ -131,7 +131,7 @@ void HandleCollisions(float deltaTime, ConsoleEngine& consoleEngine)
     if (((playerY + PlayerHeight) + (velocityY * deltaTime)) > consoleEngine.ConsoleWindowHeight + 1)
     {
         playerY = static_cast<float>(consoleEngine.ConsoleWindowHeight) - PlayerHeight;
-        
+
         velocityY *= (-1);
         velocityY += bounceForceFalloff;
     };
@@ -226,91 +226,92 @@ void DrawPlayer(ConsoleEngine& consoleEngine)
 };
 
 
-void DrawConsoleText(ConsoleEngine& consoleEngine)
+void DrawConsoleText(std::wstring& debugString)
 {
-    std::wstring text;
-    text.append(L"Player X:   ");
-    text.append(std::to_wstring(playerX));
+    debugString.append(L"Player X:   ");
+    debugString.append(std::to_wstring(playerX));
 
-    text.append(L"\n");
+    debugString.append(L"\n");
 
-    text.append(L"Player Y:   ");
-    text.append(std::to_wstring(playerY));
+    debugString.append(L"Player Y:   ");
+    debugString.append(std::to_wstring(playerY));
 
-    consoleEngine.DrawConsoleText(0, 0, text.c_str(), ConsoleEngine::ConsoleColour::RED);
-    text.clear();
+    debugString.append(L"\n");
 
-    text.append(L"Velocity X: ");
-    text.append(std::to_wstring(velocityX));
+    debugString.append(L"Velocity X: ");
+    debugString.append(std::to_wstring(velocityX));
 
-    text.append(L"\n");
+    debugString.append(L"\n");
 
-    text.append(L"Velocity Y: ");
-    text.append(std::to_wstring(velocityY));
+    debugString.append(L"Velocity Y: ");
+    debugString.append(std::to_wstring(velocityY));
 
-    consoleEngine.DrawConsoleText(0, 2, text.c_str(), ConsoleEngine::ConsoleColour::BLUE);
+    debugString.append(L"\n");
 };
 
 
-void DrawDeltaTime(ConsoleEngine& consoleEngine, float deltaTime)
+void DrawDeltaTime(float deltaTime, std::wstring& debugString)
 {
-    std::wstring text;
-    text.append(L"Delta time: ");
-    text.append(std::to_wstring(deltaTime));
-
-    consoleEngine.DrawConsoleText(0, 4, text.c_str());
+    debugString.append(L"Delta time: ");
+    debugString.append(std::to_wstring(deltaTime));
+ 
+    debugString.append(L"\n");
 };
 
 
-void DrawMousePosition(ConsoleEngine& consoleEngine)
+void DrawMousePosition(ConsoleEngine& consoleEngine, std::wstring& debugString)
 {
     std::pair<short, short> mousePos = consoleEngine.GetMousePosition();
 
-    std::wstring text;
-    text.append(L"Mouse X: ");
-    text.append(std::to_wstring(mousePos.first));
+    debugString.append(L"Mouse X: ");
+    debugString.append(std::to_wstring(mousePos.first));
 
-    consoleEngine.DrawConsoleText(0, 5, text.c_str());
+    debugString.append(L"\n");
 
-    text.clear();
+    debugString.append(L"Mouse Y: ");
+    debugString.append(std::to_wstring(mousePos.second));
 
-    text.append(L"Mouse Y: ");
-    text.append(std::to_wstring(mousePos.second));
-    consoleEngine.DrawConsoleText(0, 6, text.c_str());
+    debugString.append(L"\n");
 }
+
+
+void DrawFPS(ConsoleEngine& consoleEngine)
+{
+
+};
 
 
 void Draw(ConsoleEngine& consoleEngine, float deltaTime)
 {
+    std::wstring debugString;
+
     DrawPlayer(consoleEngine);
 
     if (showHelp == true)
     {
-        DrawConsoleText(consoleEngine);
+        DrawConsoleText(debugString);
 
-        DrawDeltaTime(consoleEngine, deltaTime);
+        DrawDeltaTime(deltaTime, debugString);
 
-        DrawMousePosition(consoleEngine);
+        DrawMousePosition(consoleEngine, debugString);
 
         const Mouse& mouse = consoleEngine.GetMouse();
 
-        std::wstring text;
-        text.append(L"Left Mbtn: ");
+        debugString.append(L"Left Mbtn: ");
 
         if (mouse.LeftMouseButton == MouseKeyState::Released)
-            text.append(L"Released");
+            debugString.append(L"Released");
         else if (mouse.LeftMouseButton == MouseKeyState::Pressed)
-            text.append(L"Pressed");
+            debugString.append(L"Pressed");
         else
-            text.append(L"How tf ?");
-
-        consoleEngine.DrawConsoleText(0, 7, text.c_str());
+            debugString.append(L"How tf ?");
 
 
         if (isFirstTimeShowHelp == true)
-            consoleEngine.DrawConsoleText(0, 8, L"Press F1 to toggle help");
+            consoleEngine.DrawConsoleText(0, 8, L"Press F1 to toggle debug");
     };
 
+    consoleEngine.DrawConsoleText(0, 0, debugString.c_str());
 };
 
 
