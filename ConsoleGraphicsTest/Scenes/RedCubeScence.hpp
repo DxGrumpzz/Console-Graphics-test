@@ -302,7 +302,7 @@ public:
 
         HandleVelocity(deltaTime);
 
-        _consoleEngine.DrawConsoleText(0, 0, L"Red cube scence");
+        _consoleEngine.DrawConsoleText(0, 0, L"Red cube scence", ConsoleEngine::ConsoleColour::RED);
 
         std::wstring debugString;
 

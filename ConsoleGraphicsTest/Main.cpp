@@ -5,22 +5,18 @@
 
 #include "RedCubeScence.hpp"
 #include "BlueCubeScence.hpp"
-#include "GreenCubeScence.hpp"
+#include "TestScene.hpp"
 
 #include "IScence.hpp"
 
 
 
-struct Vector2
-{
-    float X = 0;
-    float Y = 0;
-};
-
 
 int consoleWindowWidh = 50;
 int consoleWindowHeight = 50;
 
+short fontWidth = 10;
+short fontHeight = 10;
 
 /// <summary>
 /// The list of scenes
@@ -54,7 +50,7 @@ void CycleScences()
 
                 // Cycle to the next scene
                 currentScene++;
-                
+
                 // If it's the last scene
                 if (currentScene == scenes.end())
                 {
@@ -91,6 +87,7 @@ void CycleScences()
 };
 
 
+
 bool GameLoop(float deltaTime, ConsoleEngine& consoleEngine)
 {
     CycleScences();
@@ -104,15 +101,17 @@ bool GameLoop(float deltaTime, ConsoleEngine& consoleEngine)
 
 int main()
 {
-    ConsoleEngine* consoleEngine = new ConsoleEngine(GameLoop, consoleWindowWidh, consoleWindowHeight);
-
-    scenes.emplace_back(new RedCubeScence(*consoleEngine));
-    scenes.emplace_back(new GreenCubeScence(*consoleEngine));
-    scenes.emplace_back(new BlueCubeScence(*consoleEngine));
-
-    currentScene = scenes.begin();
+    ConsoleEngine* consoleEngine = new ConsoleEngine(GameLoop,
+                                                     consoleWindowWidh, consoleWindowHeight,
+                                                     fontWidth, fontHeight);
 
     consoleEngine->BuildEngine();
+
+    scenes.emplace_back(new RedCubeScence(*consoleEngine));
+    scenes.emplace_back(new TestScene(*consoleEngine));
+    scenes.emplace_back(new BlueCubeScence(*consoleEngine));
+
+    currentScene = scenes.begin() + 1;
 
     consoleEngine->Run();
 

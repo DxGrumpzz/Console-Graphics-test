@@ -156,7 +156,7 @@
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp" />
     <ClInclude Include="Scenes\BlueCubeScence.hpp" />
-    <ClInclude Include="Scenes\GreenCubeScence.hpp" />
+    <ClInclude Include="Scenes\TestScene.hpp" />
     <ClInclude Include="Scenes\IScence.hpp" />
     <ClInclude Include="Scenes\RedCubeScence.hpp" />
   </ItemGroup>
