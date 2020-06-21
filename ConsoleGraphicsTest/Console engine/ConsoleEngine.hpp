@@ -69,6 +69,10 @@ private:
 
     Mouse _mouse;
 
+    /// <summary>
+    /// How many frames elapsed in a second
+    /// </summary>
+    float _fps = 0.0f;
 
 public:
 
@@ -231,9 +235,11 @@ public:
 
         std::chrono::duration<float > elapsed;
 
+        // An accumulator for the number of seconds passed
         float secondsAccumulator = 0.0f;
 
-        int frames = 0;
+        // An accumulator for the number of frames that have passed
+        unsigned int framesAccumulator = 0;
 
 
         while (1)
@@ -248,22 +254,18 @@ public:
             // Read any input events that occured
             ReadConsoleEvents();
 
+            // Accumulate seconds
             secondsAccumulator += elapsed.count();
 
-
+            // Check if a second has passed
             if (secondsAccumulator >= 1.0f)
             {
-                std::wstring fpsString;
+                // Calculate FPS by deviding the number of frames passed by the elapsed time
+                _fps = framesAccumulator / secondsAccumulator;
 
-                float fps = frames / secondsAccumulator;
-
-                fpsString.append(L"FPS: ");
-                fpsString.append(std::to_wstring(fps));
-
-                SetConsoleTitleW(fpsString.c_str());
-
+                // Reset accumulators
                 secondsAccumulator = 0;
-                frames = 0;
+                framesAccumulator = 0;
             };
 
 
@@ -271,7 +273,7 @@ public:
             if (GameLoop(elapsed.count(), *this) == false)
                 return;
 
-            frames++;
+            framesAccumulator++;
 
             // Display the "frame"
             WriteConsoleOutputW(_consoleOutputHandle, ScreenBuffer, { (short)ConsoleWindowWidth, (short)ConsoleWindowHeight }, { 0,0 }, &_consoleWindowRect);
@@ -366,6 +368,11 @@ public:
     const Mouse& GetMouse()
     {
         return _mouse;
+    };
+
+    unsigned int GetFPS()
+    {
+        return _fps;
     };
 
     std::pair<short, short> GetMousePosition()
