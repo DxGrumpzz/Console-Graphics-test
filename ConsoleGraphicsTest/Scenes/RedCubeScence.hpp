@@ -43,8 +43,8 @@ public:
     RedCubeScence(ConsoleEngine& consoleEngine) :
         _consoleEngine(consoleEngine),
 
-        playerX(consoleEngine.ConsoleWindowWidth / 2),
-        playerY(consoleEngine.ConsoleWindowHeight / 2)
+        playerX(static_cast<float>(consoleEngine.ConsoleWindowWidth / 2)),
+        playerY(static_cast<float>(consoleEngine.ConsoleWindowHeight / 2))
     {
     };
 
@@ -228,7 +228,7 @@ public:
         {
             for (int height = 0; height < PlayerHeight; height++)
             {
-                consoleEngine.SetConsolePixel(playerX + width, playerY + height, playerColour);
+                consoleEngine.SetConsolePixel(static_cast<int>(playerX) + width, static_cast<int>(playerY) + height, playerColour);
             };
         };
     };
