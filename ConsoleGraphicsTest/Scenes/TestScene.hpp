@@ -33,23 +33,24 @@ public:
     /// <param name="y"></param>
     void SetPixel(float x, float y, ConsoleEngine::ConsoleColour pixelColour = ConsoleEngine::ConsoleColour::WHITE)
     {
-        if (x < 0 || x > 1)
+        if (x < -1 || x > 1)
             throw std::exception("Out of bounds X");
 
-        if (y < 0 || y > 1)
+        if (y < -1 || y > 1)
             throw std::exception("Out of bounds Y");
 
         // Convert normalized coordinates (NDC) to screen space coordicates
-        int screenX = (x - (-1)) / 2.0 * (_consoleEngine.ConsoleWindowWidth - 1);
-        int screenY = ((-y) - (-1)) / 2.0 * (_consoleEngine.ConsoleWindowHeight - 1);
+        double screenX = (static_cast<size_t>(x) - (-1)) / 2.0 * (static_cast<size_t>(_consoleEngine.ConsoleWindowWidth) - 1);
+        double screenY = (static_cast<long long>(-y) - (-1)) / 2.0 * (static_cast<size_t>(_consoleEngine.ConsoleWindowHeight) - 1);
 
-
-        _consoleEngine.SetConsolePixel(screenX, screenY, pixelColour);
+        _consoleEngine.SetConsolePixel(static_cast<int>(screenX), static_cast<int>(screenY), pixelColour);
     };
+
+
 
     virtual void DrawScence(float deltaTime) override
     {
-        SetPixel(1, 0);
+        SetPixel(-0.5, 0);
     };
 
 };
