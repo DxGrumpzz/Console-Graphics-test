@@ -321,7 +321,6 @@ void Draw(ConsoleEngine& consoleEngine, float deltaTime)
 
 bool GameLoop(float deltaTime, ConsoleEngine& consoleEngine)
 {
-
     HandleInput(deltaTime, consoleEngine);
 
 

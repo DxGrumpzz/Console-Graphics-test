@@ -231,6 +231,11 @@ public:
 
         std::chrono::duration<float > elapsed;
 
+        float secondsAccumulator = 0.0f;
+
+        int frames = 0;
+
+
         while (1)
         {
             elapsed = end - start;
@@ -243,9 +248,30 @@ public:
             // Read any input events that occured
             ReadConsoleEvents();
 
+            secondsAccumulator += elapsed.count();
+
+
+            if (secondsAccumulator >= 1.0f)
+            {
+                std::wstring fpsString;
+
+                float fps = frames / secondsAccumulator;
+
+                fpsString.append(L"FPS: ");
+                fpsString.append(std::to_wstring(fps));
+
+                SetConsoleTitleW(fpsString.c_str());
+
+                secondsAccumulator = 0;
+                frames = 0;
+            };
+
+
             // Run the game loop function
             if (GameLoop(elapsed.count(), *this) == false)
                 return;
+
+            frames++;
 
             // Display the "frame"
             WriteConsoleOutputW(_consoleOutputHandle, ScreenBuffer, { (short)ConsoleWindowWidth, (short)ConsoleWindowHeight }, { 0,0 }, &_consoleWindowRect);
