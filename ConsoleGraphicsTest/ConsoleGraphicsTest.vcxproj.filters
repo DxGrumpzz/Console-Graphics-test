@@ -7,10 +7,25 @@
     <Filter Include="Console engine">
       <UniqueIdentifier>{2aa5a714-1998-4d07-9b64-405f3a2ac292}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{985d11c7-a302-4514-ad6e-ac8dca6f2112}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp">
       <Filter>Console engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\GreenCubeScence.hpp">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\IScence.hpp">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\RedCubeScence.hpp">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\BlueCubeScence.hpp">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

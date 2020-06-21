@@ -211,8 +211,9 @@ public:
         SetWindowLongW(_consoleHWND, GWL_STYLE, GetWindowLong(_consoleHWND, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
 
 
+        /*
         DWORD previousMode;
-        /*GetConsoleMode(_consoleInputHandle, &previousMode);
+        GetConsoleMode(_consoleInputHandle, &previousMode);
         SetConsoleMode(_consoleInputHandle, ENABLE_EXTENDED_FLAGS |
                        (previousMode & ~ENABLE_QUICK_EDIT_MODE));*/
 
@@ -380,7 +381,7 @@ public:
         return _mouse;
     };
 
-    unsigned int GetFPS()
+    float GetFPS()
     {
         return _fps;
     };
