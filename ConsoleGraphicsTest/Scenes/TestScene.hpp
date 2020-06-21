@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "IScence.hpp"
 #include "ConsoleEngine.hpp"
 
@@ -26,6 +26,7 @@ public:
     {
     };
 
+
     /// <summary>
     /// Activates a pixel, and converts NDC to screen space
     /// </summary>
@@ -47,10 +48,86 @@ public:
     };
 
 
+    void DrawLine(float x1, float y1, float x2, float y2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
+    {
+        float rise = y2 - y1;
+        float run = x2 - x1;
+
+        if (abs(rise) > abs(run))
+        {
+            if (y1 > y2)
+            {
+                int tempX = x1;
+                int tempY = y1;
+
+                x1 = x2;
+                x2 = tempX;
+
+                y1 = y2;
+                y2 = tempY;
+            }
+
+
+            float w = (x2 - x1) / (y2 - y1);
+            float p = x1 - w * y1;
+
+            for (int y = y1; y < y2; y++)
+            {
+                float x = w * y + p;
+                _consoleEngine.SetConsolePixel(x, y);
+            };
+        }
+        else
+        {
+            if (x1 > x2)
+            {
+                int tempX = x1;
+                int tempY = y1;
+
+                x1 = x2;
+                x2 = tempX;
+
+                y1 = y2;
+                y2 = tempY;
+            };
+
+
+            float m = rise / run;
+
+            float b = y1 - m * x1;
+
+            for (int x = x1; x < x2; x++)
+            {
+                float y = m * x + b;
+                _consoleEngine.SetConsolePixel(x, y);
+            };
+        };
+    };
+
+    float x1 = _consoleEngine.ConsoleWindowWidth;
+    float y1 = _consoleEngine.ConsoleWindowHeight;
+
+    float x2 = _consoleEngine.ConsoleWindowWidth / 2; 
+    float y2 = _consoleEngine.ConsoleWindowHeight / 2;
+
 
     virtual void DrawScence(float deltaTime) override
     {
-        SetPixel(-0.5, 0);
+        const Mouse& mouse = _consoleEngine.GetMouse();
+
+        if (mouse.LeftMouseButton == MouseKeyState::Pressed)
+        {
+            x1 = mouse.X;
+            y1 = mouse.Y;
+        }
+        else if (mouse.RightMouseButton == MouseKeyState::Pressed)
+        {
+            x2 = mouse.X;
+            y2 = mouse.Y;
+        };
+
+
+        DrawLine(x1, y1, x2, y2);
     };
 
 };

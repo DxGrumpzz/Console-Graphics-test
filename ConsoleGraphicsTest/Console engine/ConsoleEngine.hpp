@@ -347,6 +347,12 @@ public:
     /// <param name="pixelColour"> Which colour to draw the pixel in </param>
     void SetConsolePixel(int x, int y, ConsoleColour pixelColour = ConsoleColour::WHITE)
     {
+        if (x < 0 || x > ConsoleWindowWidth)
+            return;
+
+        if (y < 0 || y > ConsoleWindowHeight)
+            return;
+
         // Get a CHAR_INFO reference to the pointer located at the x and y position
         CHAR_INFO& pixel = *GetPixelAddress(x, y);
 
