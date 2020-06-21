@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <Windows.h>
 #include <iostream>
@@ -315,8 +315,8 @@ public:
                 // Set X back to the starting position of the X
                 x = startingX;
 
-                // Move to the next character
-                a++;
+                // Move to next iteration
+                continue;
             };
 
             // Set a character in the x and y position 
