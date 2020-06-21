@@ -237,6 +237,7 @@ void DrawConsoleText(std::wstring& debugString)
     debugString.append(std::to_wstring(playerY));
 
     debugString.append(L"\n");
+    debugString.append(L"\n");
 
     debugString.append(L"Velocity X: ");
     debugString.append(std::to_wstring(velocityX));
@@ -247,14 +248,6 @@ void DrawConsoleText(std::wstring& debugString)
     debugString.append(std::to_wstring(velocityY));
 
     debugString.append(L"\n");
-};
-
-
-void DrawDeltaTime(float deltaTime, std::wstring& debugString)
-{
-    debugString.append(L"Delta time: ");
-    debugString.append(std::to_wstring(deltaTime));
- 
     debugString.append(L"\n");
 };
 
@@ -271,6 +264,7 @@ void DrawMousePosition(ConsoleEngine& consoleEngine, std::wstring& debugString)
     debugString.append(L"Mouse Y: ");
     debugString.append(std::to_wstring(mousePos.second));
 
+    debugString.append(L"\n");
     debugString.append(L"\n");
 }
 
@@ -291,8 +285,6 @@ void Draw(ConsoleEngine& consoleEngine, float deltaTime)
     {
         DrawConsoleText(debugString);
 
-        DrawDeltaTime(deltaTime, debugString);
-
         DrawMousePosition(consoleEngine, debugString);
 
         const Mouse& mouse = consoleEngine.GetMouse();
@@ -305,10 +297,19 @@ void Draw(ConsoleEngine& consoleEngine, float deltaTime)
             debugString.append(L"Pressed");
         else
             debugString.append(L"How tf ?");
+        debugString.append(L"\n");
+
+
+        debugString.append(L"\n");
+
+        debugString.append(L"FPS: ");
+        debugString.append(std::to_wstring(consoleEngine.GetFPS()));
+
+        debugString.append(L"\n");
 
 
         if (isFirstTimeShowHelp == true)
-            consoleEngine.DrawConsoleText(0, 8, L"Press F1 to toggle debug");
+            debugString.append(L"Press F1 to toggle debug\n");
     };
 
     consoleEngine.DrawConsoleText(0, 0, debugString.c_str());
