@@ -1,13 +1,11 @@
 ﻿#pragma once
+
+
 #include "IScence.hpp"
 #include "ConsoleEngine.hpp"
+#include "Vector2D.hpp"
 
 
-struct Vector2
-{
-    float X = 0;
-    float Y = 0;
-};
 
 
 class TestScene : public IScence
@@ -32,17 +30,17 @@ public:
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    void SetPixel(float x, float y, ConsoleEngine::ConsoleColour pixelColour = ConsoleEngine::ConsoleColour::WHITE)
+    void SetPixelNDC(float ndcX, float ndcY, ConsoleEngine::ConsoleColour pixelColour = ConsoleEngine::ConsoleColour::WHITE)
     {
-        if (x < -1 || x > 1)
+        if (ndcX < -1 || ndcX > 1)
             throw std::exception("Out of bounds X");
 
-        if (y < -1 || y > 1)
+        if (ndcY < -1 || ndcY > 1)
             throw std::exception("Out of bounds Y");
 
         // Convert normalized coordinates (NDC) to screen space coordicates
-        double screenX = (static_cast<size_t>(x) - (-1)) / 2.0 * (static_cast<size_t>(_consoleEngine.ConsoleWindowWidth) - 1);
-        double screenY = (static_cast<long long>(-y) - (-1)) / 2.0 * (static_cast<size_t>(_consoleEngine.ConsoleWindowHeight) - 1);
+        double screenX = (static_cast<size_t>(ndcX) - (-1)) / 2.0 * (static_cast<size_t>(_consoleEngine.ConsoleWindowWidth) - 1);
+        double screenY = (static_cast<long long>(-ndcY) - (-1)) / 2.0 * (static_cast<size_t>(_consoleEngine.ConsoleWindowHeight) - 1);
 
         _consoleEngine.SetConsolePixel(static_cast<int>(screenX), static_cast<int>(screenY), pixelColour);
     };
@@ -67,7 +65,7 @@ public:
         float rise = y2 - y1;
         float run = x2 - x1;
 
-        
+
         // Check if the slope of the line is too low
         if (abs(rise) > abs(run))
         {
@@ -90,7 +88,7 @@ public:
             float w = (x2 - x1) / (y2 - y1);
             float p = x1 - w * y1;
 
-            for (int y = y1; y < y2; y++)
+            for (int y = y1; y <= y2; y++)
             {
                 float x = w * y + p;
                 _consoleEngine.SetConsolePixel(x, y);
@@ -115,7 +113,7 @@ public:
 
             float b = y1 - m * x1;
 
-            for (int x = x1; x < x2; x++)
+            for (int x = x1; x <= x2; x++)
             {
                 float y = m * x + b;
                 _consoleEngine.SetConsolePixel(x, y);
@@ -124,16 +122,33 @@ public:
     };
 
 
-    void DrawLine(Vector2 point1, Vector2 point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
+    void DrawLine(Vector2D point1, Vector2D point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
     {
-        DrawLine(point1.X, point1.Y, point2.X, point2.y, lineColour);
+        DrawLine(point1.X, point1.Y, point2.X, point2.Y, lineColour);
     };
 
 
 
+    Vector2D ToScreenSpace(const Vector2D& vector)
+    {
+        float screenSpaceX = vector.X + (_consoleEngine.ConsoleWindowWidth / 2);
+        float screenSpaceY = (-vector.Y) + (_consoleEngine.ConsoleWindowHeight / 2);
+        
+        return { screenSpaceX, screenSpaceY };
+    };
+
+
+
+    Vector2D v1 = { 0 , 0 };
+
+
     virtual void DrawScence(float deltaTime) override
     {
-
+        Vector2D v2 = { 0, -10 };
+        
+        Vector2D v1SP = ToScreenSpace(v2);
+        
+        _consoleEngine.SetConsolePixel(v1SP.X, v1SP.Y);
     };
 
 };
