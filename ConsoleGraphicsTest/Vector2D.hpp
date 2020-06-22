@@ -33,10 +33,8 @@ public:
             X *= (1.0f / length);
             Y *= (1.0f / length);
         };
-
-        // X /= length;
-        // Y /= length;
     };
+
 
     Vector2D Normalized() const
     {
@@ -68,8 +66,11 @@ public:
         float cosResult = cos(angle);
         float sinResult = sin(angle);
 
-        X = X * cosResult - Y * sinResult;
-        Y = X * sinResult + Y * cosResult;
+        float angledX = X * cosResult - Y * sinResult;
+        float angledY = X * sinResult + Y * cosResult;
+
+        X = angledX;
+        Y = angledY;
     };
 
     void RotateDeg(float degrees)

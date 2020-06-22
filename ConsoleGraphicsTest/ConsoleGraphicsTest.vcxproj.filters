@@ -27,5 +27,8 @@
     <ClInclude Include="Scenes\TestScene.hpp">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Vector2D.hpp">
+      <Filter>Console engine</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
