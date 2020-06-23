@@ -14,8 +14,8 @@ private:
     float playerX;
     float playerY;
 
-    float PlayerWidth = 2;
-    float PlayerHeight = 2;
+    float PlayerWidth = 5;
+    float PlayerHeight = 5;
 
     const float accelerationRate = 20.0f;
     const float decelerationRate = 2.25f;
@@ -37,6 +37,7 @@ private:
 
     const float bounceForceFalloff = 7.0f;
 
+    bool displayMousePositionOnPlayer = false;
 
 public:
 
@@ -48,8 +49,12 @@ public:
     {
     };
 
+    bool draggingPlayer = false;
 
 public:
+
+    int mouseXInPlayer = 0;
+    int mouseYInPlayer = 0;
 
     void HandleInput(float deltaTime, ConsoleEngine& consoleEngine)
     {
@@ -94,12 +99,28 @@ public:
 
 
 
-        if (mouse.LeftMouseButton == MouseKeyState::Pressed &&
-            mouseOverPlayer == true)
+        if (mouse.LeftMouseButton == MouseKeyState::Pressed && mouseOverPlayer == true)
         {
-            playerX = mouse.X;
-            playerY = mouse.Y;
+            if (draggingPlayer == false)
+            {
+                mouseXInPlayer = mouse.X - playerX;
+                mouseYInPlayer = mouse.Y - playerY;
+
+                draggingPlayer = true;
+            }
+            else
+            {
+                draggingPlayer = true;
+
+                playerX = mouse.X - mouseXInPlayer;
+                playerY = mouse.Y - mouseYInPlayer;
+            };
+        }
+        else
+        {
+            draggingPlayer = false;
         };
+
 
 
         if ((mouse.X >= playerX) &&
@@ -297,7 +318,7 @@ public:
     virtual void DrawScence(float deltaTime) override
     {
         HandleInput(deltaTime, _consoleEngine);
-        
+
         HandleCollisions(deltaTime, _consoleEngine);
 
         HandleVelocity(deltaTime);
@@ -333,6 +354,14 @@ public:
 
             if (isFirstTimeShowHelp == true)
                 debugString.append(L"Press F1 to toggle debug\n");
+        };
+
+
+        if (mouseOverPlayer == true)
+        {
+            const Mouse& mouse = _consoleEngine.GetMouse();
+
+            _consoleEngine.SetConsolePixel(mouse.X, mouse.Y, ConsoleEngine::ConsoleColour::YELLOW);
         };
 
 
