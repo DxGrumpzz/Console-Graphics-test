@@ -30,5 +30,6 @@
     <ClInclude Include="Vector2D.hpp">
       <Filter>Console engine</Filter>
     </ClInclude>
+    <ClInclude Include="CoordinateTransformer.hpp" />
   </ItemGroup>
 </Project>
