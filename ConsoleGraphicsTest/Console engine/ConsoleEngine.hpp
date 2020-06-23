@@ -348,10 +348,11 @@ public:
     void SetConsolePixel(int x, int y, ConsoleColour pixelColour = ConsoleColour::WHITE)
     {
         if (x < 0 || x > ConsoleWindowWidth)
-            return;
+            throw std::exception("X is out of bounds");
 
         if (y < 0 || y > ConsoleWindowHeight)
-            return;
+            throw std::exception("Y is out of bounds");
+
 
         // Get a CHAR_INFO reference to the pointer located at the x and y position
         CHAR_INFO& pixel = *GetPixelAddress(x, y);

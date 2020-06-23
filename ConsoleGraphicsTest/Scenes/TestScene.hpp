@@ -1,11 +1,9 @@
 ﻿#pragma once
 
-
 #include "IScence.hpp"
 #include "ConsoleEngine.hpp"
 #include "Vector2D.hpp"
-
-
+#include "VectorTransformer.hpp"
 
 
 class TestScene : public IScence
@@ -91,6 +89,7 @@ public:
             for (int y = y1; y <= y2; y++)
             {
                 float x = w * y + p;
+
                 _consoleEngine.SetConsolePixel(x, y);
             };
         }
@@ -116,39 +115,51 @@ public:
             for (int x = x1; x <= x2; x++)
             {
                 float y = m * x + b;
+
+
                 _consoleEngine.SetConsolePixel(x, y);
+
             };
         };
     };
 
-
-    void DrawLine(Vector2D point1, Vector2D point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
+    void DrawLine(const Vector2D& point1, const Vector2D& point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
     {
         DrawLine(point1.X, point1.Y, point2.X, point2.Y, lineColour);
     };
 
 
-
-    Vector2D ToScreenSpace(const Vector2D& vector)
+    void DrawLineCartesian(const Vector2D& point1, const Vector2D& point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
     {
-        float screenSpaceX = vector.X + (_consoleEngine.ConsoleWindowWidth / 2);
-        float screenSpaceY = (-vector.Y) + (_consoleEngine.ConsoleWindowHeight / 2);
-        
-        return { screenSpaceX, screenSpaceY };
+        using namespace VectorTransformer;
+
+        Vector2D screenSpaceVector1 = CartesianToScreenSpace(point1, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
+        Vector2D screenSpaceVector2 = CartesianToScreenSpace(point2, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
+
+        DrawLine(screenSpaceVector1, screenSpaceVector2, lineColour);
     };
 
 
 
-    Vector2D v1 = { 0 , 0 };
-
-
     virtual void DrawScence(float deltaTime) override
     {
-        Vector2D v2 = { 0, -10 };
-        
-        Vector2D v1SP = ToScreenSpace(v2);
-        
-        _consoleEngine.SetConsolePixel(v1SP.X, v1SP.Y);
+        Mouse mouse = _consoleEngine.GetMouse();
+
+        using namespace VectorTransformer;
+
+
+        Vector2D mouseCart = MouseToCartesian(mouse.X, mouse.Y, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
+
+        Vector2D v0(0, 0);
+        Vector2D m(mouseCart.X, mouseCart.Y);
+
+        Vector2D v1 = m - v0;
+
+        v1.Normalize();
+
+        v1.Scale(6.0f);
+
+        DrawLineCartesian(v0, v1);
     };
 
 };

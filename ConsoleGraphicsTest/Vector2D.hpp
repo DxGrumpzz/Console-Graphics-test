@@ -11,6 +11,16 @@ public:
     float X = 0;
     float Y = 0;
 
+
+public:
+
+    Vector2D(float x = 0.0f, float y = 0.0f) :
+        X(x),
+        Y(y)
+    {
+    }
+
+
 public:
 
     float Length() const
@@ -38,7 +48,7 @@ public:
 
     Vector2D Normalized() const
     {
-        int length = Length();
+        float length = Length();
 
         if (length != 0)
         {
@@ -91,6 +101,20 @@ public:
     {
         X -= rightVector.X;
         Y -= rightVector.Y;
+
+        return *this;
+    };
+
+
+    Vector2D operator + (const Vector2D& rightVector) const
+    {
+        return Vector2D({ X + rightVector.X,  Y + rightVector.Y });
+    };
+
+    Vector2D& operator += (const Vector2D& rightVector)
+    {
+        X += rightVector.X;
+        Y += rightVector.Y;
 
         return *this;
     };

@@ -155,7 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp" />
-    <ClInclude Include="CoordinateTransformer.hpp" />
+    <ClInclude Include="VectorTransformer.hpp" />
     <ClInclude Include="Scenes\BlueCubeScence.hpp" />
     <ClInclude Include="Scenes\TestScene.hpp" />
     <ClInclude Include="Scenes\IScence.hpp" />
