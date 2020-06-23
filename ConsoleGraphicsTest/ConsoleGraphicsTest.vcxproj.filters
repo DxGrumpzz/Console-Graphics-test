@@ -21,9 +21,6 @@
     <ClInclude Include="Scenes\RedCubeScence.hpp">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\BlueCubeScence.hpp">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Vector2D.hpp">
       <Filter>Console engine</Filter>
     </ClInclude>

@@ -156,7 +156,6 @@
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp" />
     <ClInclude Include="VectorTransformer.hpp" />
-    <ClInclude Include="Scenes\BlueCubeScence.hpp" />
     <ClInclude Include="Scenes\VectorMousePointerScene.hpp" />
     <ClInclude Include="Scenes\IScence.hpp" />
     <ClInclude Include="Scenes\RedCubeScence.hpp" />
