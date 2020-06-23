@@ -6,7 +6,7 @@
 #include "VectorTransformer.hpp"
 
 
-class TestScene : public IScence
+class VectorMousePointerScene : public IScence
 {
 
 private:
@@ -17,7 +17,7 @@ private:
 
 public:
 
-    TestScene(ConsoleEngine& consoleEngine) :
+    VectorMousePointerScene(ConsoleEngine& consoleEngine) :
         _consoleEngine(consoleEngine)
     {
     };
@@ -65,7 +65,7 @@ public:
 
 
         // Check if the slope of the line is too low
-        if (abs(rise) > abs(run))
+        if (true)//abs(rise) > abs(run))
         {
             // Swap Y-coordinates without this, every part of the line under Y1 won't render
             if (y1 > y2)
@@ -140,9 +140,11 @@ public:
     };
 
 
+    int previousKey = 0;
 
     virtual void DrawScence(float deltaTime) override
     {
+        
         Mouse mouse = _consoleEngine.GetMouse();
 
         using namespace VectorTransformer;
