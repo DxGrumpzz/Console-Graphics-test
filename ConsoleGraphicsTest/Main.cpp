@@ -4,7 +4,6 @@
 #include "ConsoleEngine.hpp"
 
 #include "RedCubeScence.hpp"
-#include "BlueCubeScence.hpp"
 #include "VectorMousePointerScene.hpp"
 
 #include "IScence.hpp"
@@ -109,9 +108,8 @@ int main()
 
     scenes.emplace_back(new RedCubeScence(*consoleEngine));
     scenes.emplace_back(new VectorMousePointerScene(*consoleEngine));
-    scenes.emplace_back(new BlueCubeScence(*consoleEngine));
 
-    currentScene = scenes.begin() + 1;
+    currentScene = scenes.begin();// +1;
 
     consoleEngine->Run();
 
