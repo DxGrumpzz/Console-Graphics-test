@@ -8,9 +8,24 @@
 
 enum class MouseKeyState
 {
+    /// <summary>
+    /// Mouse key has no new events
+    /// </summary>
     None = 0,
+
+    /// <summary>
+    /// Mouse was pressed or held and then released
+    /// </summary>
     Released = 1,
+
+    /// <summary>
+    /// Mouse was pressed down
+    /// </summary>
     Pressed = 2,
+
+    /// <summary>
+    /// Mouse key is being held
+    /// </summary>
     Held = 3,
 };
 
@@ -446,6 +461,48 @@ private:
     }
 
 
+    /// <summary>
+    /// Returns a MouseKeyState based on a current mouse key state
+    /// </summary>
+    /// <param name="mouseKeyCode"> The mouse button key code </param>
+    /// <param name="previousMouseKey"> The previous mouse key state </param>
+    /// <returns></returns>
+    MouseKeyState GetNewMouseKeyState(int mouseKeyCode, MouseKeyState previousMouseKey)
+    {
+        // Check if mouse button is pressed
+        if (GetAsyncKeyState(mouseKeyCode))
+        {
+            // If mouse key was pressed or held before
+            if (previousMouseKey == MouseKeyState::Held ||
+                previousMouseKey == MouseKeyState::Pressed)
+            {
+                // Set key state to held
+                return MouseKeyState::Held;
+            }
+            // If mouse was None, or released 
+            else
+                // Set mouse to pressed
+                return MouseKeyState::Pressed;
+        }
+        // If nothing happend with the mouse key
+        else
+        {
+            // If mouse key was previously held or pressed
+            if (previousMouseKey == MouseKeyState::Held ||
+                previousMouseKey == MouseKeyState::Pressed)
+            {
+                // Set it to released
+                return MouseKeyState::Released;
+            }
+            // If mouse still wasn't pressed 
+            else
+            {
+                // Set it's state to none because nothing changed
+                return MouseKeyState::None;
+            };
+        };
+    };
+
 
     void HandleMouseEvents()
     {
@@ -481,54 +538,9 @@ private:
         // Handle mouse clicks only if mouse is in bounds of the console
         if (mouseInBounds == true)
         {
+            _mouse.LeftMouseButton = GetNewMouseKeyState(VK_LBUTTON, _mouse.LeftMouseButton);
 
-            // Left mouse button
-            if (GetAsyncKeyState(VK_LBUTTON))
-            {
-                if (_mouse.LeftMouseButton == MouseKeyState::Held ||
-                    _mouse.LeftMouseButton == MouseKeyState::Pressed)
-                {
-                    _mouse.LeftMouseButton = MouseKeyState::Held;
-                }
-                else
-                    _mouse.LeftMouseButton = MouseKeyState::Pressed;
-            }
-            else
-            {
-                if (_mouse.LeftMouseButton == MouseKeyState::Held ||
-                    _mouse.LeftMouseButton == MouseKeyState::Pressed)
-                {
-                    _mouse.LeftMouseButton = MouseKeyState::Released;
-                }
-                else
-                {
-                    _mouse.LeftMouseButton = MouseKeyState::None;
-                };
-            };
-
-
-            if (GetAsyncKeyState(VK_RBUTTON))
-            {
-                if (_mouse.RightMouseButton == MouseKeyState::Held ||
-                    _mouse.RightMouseButton == MouseKeyState::Pressed)
-                {
-                    _mouse.RightMouseButton = MouseKeyState::Held;
-                }
-                else
-                    _mouse.RightMouseButton = MouseKeyState::Pressed;
-            }
-            else
-            {
-                if (_mouse.RightMouseButton == MouseKeyState::Held ||
-                    _mouse.RightMouseButton == MouseKeyState::Pressed)
-                {
-                    _mouse.RightMouseButton = MouseKeyState::Released;
-                }
-                else
-                {
-                    _mouse.RightMouseButton = MouseKeyState::None;
-                };
-            };
+            _mouse.RightMouseButton = GetNewMouseKeyState(VK_RBUTTON, _mouse.RightMouseButton);
         };
 
     };
