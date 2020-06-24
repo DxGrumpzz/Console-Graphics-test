@@ -90,6 +90,9 @@ public:
         Rotate(radians);
     };
 
+
+    #pragma region Operators
+
 public:
 
     Vector2D operator - (const Vector2D& rightVector) const
@@ -118,5 +121,36 @@ public:
 
         return *this;
     };
+
+
+
+    Vector2D operator * (const Vector2D& rightVector) const
+    {
+        return Vector2D({ X * rightVector.X,  Y * rightVector.Y });
+    };
+
+    Vector2D& operator *= (const Vector2D& rightVector)
+    {
+        X *= rightVector.X;
+        Y *= rightVector.Y;
+
+        return *this;
+    };
+
+
+    Vector2D operator * (float value) const
+    {
+        return Vector2D({ X * value,  Y * value });
+    };
+
+    Vector2D& operator *= (float value)
+    {
+        X *= value;
+        Y *= value;
+
+        return *this;
+    };
+
+    #pragma endregion
 
 };
