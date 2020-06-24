@@ -8,8 +8,10 @@
 
 enum class MouseKeyState
 {
-    Released = 0,
-    Pressed = 1,
+    None = 0,
+    Released = 1,
+    Pressed = 2,
+    Held = 3,
 };
 
 
@@ -21,7 +23,6 @@ struct Mouse
     MouseKeyState RightMouseButton;
     MouseKeyState LeftMouseButton;
 };
-
 
 
 /// <summary>
@@ -65,6 +66,11 @@ private:
     /// A screen rectangle of the console's window
     /// </summary>
     SMALL_RECT _consoleWindowRect;
+
+    /// <summary>
+    /// The console window's actuall size
+    /// </summary>
+    RECT _consoleWindowActuallRect;
 
 
     Mouse _mouse;
@@ -140,6 +146,7 @@ public:
 
         _consoleHWND(NULL),
         _consoleWindowRect({ 0 }),
+        _consoleWindowActuallRect({ 0 }),
 
         _mouse({ 0 }),
 
@@ -225,6 +232,9 @@ public:
 
         // Hide the console's cursor (Blinking underscore thing )
         HideConsoleCursor(_consoleOutputHandle);
+
+        // Get the actuall size of the window
+        GetWindowRect(_consoleHWND, &_consoleWindowActuallRect);
     };
 
 
@@ -263,7 +273,7 @@ public:
             memset(ScreenBuffer, 0, sizeof(CHAR_INFO) * ConsoleWindowWidth * ConsoleWindowHeight);
 
             // Read any input events that occured
-            ReadConsoleEvents();
+            HandleInputEvents();
 
             // Accumulate seconds
             secondsAccumulator += elapsed.count();
@@ -401,9 +411,48 @@ public:
 
 private:
 
-    void ReadConsoleEvents()
+    void HandleInputEvents()
     {
+        // Hanlde mouse 
+        HandleMouseEvents();
 
+        // Here be keyboard events (maybe)
+    };
+
+
+    /// <summary>
+    /// Checks if the mouse pointer is inside the console window
+    /// </summary>
+    /// <returns></returns>
+    bool IsMouseInBoundsOfWindow()
+    {
+        // Get the mouse's point relative to screen
+        POINT mousePoint = { 0 };
+        GetCursorPos(&mousePoint);
+
+        // "Translate" the mouse point relative to the window's client area
+        ScreenToClient(_consoleHWND, &mousePoint);
+
+        // Get the actuall width and height of the conosle
+        int windowWidth = _consoleWindowActuallRect.right - _consoleWindowActuallRect.left;
+        int windowHeight = _consoleWindowActuallRect.bottom - _consoleWindowActuallRect.top;
+
+        // Simple bounds check
+        if (((mousePoint.x >= 0) && (mousePoint.x < windowWidth)) &&
+            ((mousePoint.y >= 0) && (mousePoint.y < windowHeight)))
+            return true;
+
+        return false;
+    }
+
+
+
+    void HandleMouseEvents()
+    {
+        // Check if mouse is in bounds of window
+        bool mouseInBounds = IsMouseInBoundsOfWindow();
+
+        // Mouse movment
         INPUT_RECORD inputEvents[32];
 
         DWORD numberOfEvents = 0;
@@ -422,21 +471,69 @@ private:
                 _mouse.X = mouseEvent.dwMousePosition.X;
                 _mouse.Y = mouseEvent.dwMousePosition.Y;
 
-                if (mouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-                    _mouse.LeftMouseButton = MouseKeyState::Pressed;
-                else
-                    _mouse.LeftMouseButton = MouseKeyState::Released;
-
-
-                if (mouseEvent.dwButtonState == RIGHTMOST_BUTTON_PRESSED)
-                    _mouse.RightMouseButton = MouseKeyState::Pressed;
-                else
-                    _mouse.RightMouseButton = MouseKeyState::Released;
 
             };
         };
 
+
+        // Mouse clicks
+
+        // Handle mouse clicks only if mouse is in bounds of the console
+        if (mouseInBounds == true)
+        {
+
+            // Left mouse button
+            if (GetAsyncKeyState(VK_LBUTTON))
+            {
+                if (_mouse.LeftMouseButton == MouseKeyState::Held ||
+                    _mouse.LeftMouseButton == MouseKeyState::Pressed)
+                {
+                    _mouse.LeftMouseButton = MouseKeyState::Held;
+                }
+                else
+                    _mouse.LeftMouseButton = MouseKeyState::Pressed;
+            }
+            else
+            {
+                if (_mouse.LeftMouseButton == MouseKeyState::Held ||
+                    _mouse.LeftMouseButton == MouseKeyState::Pressed)
+                {
+                    _mouse.LeftMouseButton = MouseKeyState::Released;
+                }
+                else
+                {
+                    _mouse.LeftMouseButton = MouseKeyState::None;
+                };
+            };
+
+
+            if (GetAsyncKeyState(VK_RBUTTON))
+            {
+                if (_mouse.RightMouseButton == MouseKeyState::Held ||
+                    _mouse.RightMouseButton == MouseKeyState::Pressed)
+                {
+                    _mouse.RightMouseButton = MouseKeyState::Held;
+                }
+                else
+                    _mouse.RightMouseButton = MouseKeyState::Pressed;
+            }
+            else
+            {
+                if (_mouse.RightMouseButton == MouseKeyState::Held ||
+                    _mouse.RightMouseButton == MouseKeyState::Pressed)
+                {
+                    _mouse.RightMouseButton = MouseKeyState::Released;
+                }
+                else
+                {
+                    _mouse.RightMouseButton = MouseKeyState::None;
+                };
+            };
+        };
+
     };
+
+
 
     /// <summary>
     /// Sets a font for the console
