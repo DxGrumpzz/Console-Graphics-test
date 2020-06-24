@@ -6,6 +6,7 @@
 #include "VectorTransformer.hpp"
 
 
+
 class VectorMousePointerScene : public IScence
 {
 
@@ -65,7 +66,7 @@ public:
 
 
         // Check if the slope of the line is too low
-        if (true)//abs(rise) > abs(run))
+        if (abs(rise) > abs(run))
         {
             // Swap Y-coordinates without this, every part of the line under Y1 won't render
             if (y1 > y2)
@@ -140,22 +141,18 @@ public:
     };
 
 
-    int previousKey = 0;
 
     virtual void DrawScence(float deltaTime) override
     {
-        
         Mouse mouse = _consoleEngine.GetMouse();
 
         using namespace VectorTransformer;
 
 
+        Vector2D v0(0, 0);
         Vector2D mouseCart = MouseToCartesian(mouse.X, mouse.Y, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
 
-        Vector2D v0(0, 0);
-        Vector2D m(mouseCart.X, mouseCart.Y);
-
-        Vector2D v1 = m - v0;
+        Vector2D v1 = mouseCart - v0;
 
         v1.Normalize();
 
