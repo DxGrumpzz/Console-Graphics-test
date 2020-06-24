@@ -14,11 +14,10 @@ namespace VectorTransformer
     };
 
 
-    Vector2D CartesianToScreenSpace(const Vector2D& vector, int consoleWindowWidth, int consoleWindowHeight)
+    Vector2D CartesianVectorToScreenSpace(const Vector2D& vector, int consoleWindowWidth, int consoleWindowHeight)
     {
         return CartesianToScreenSpace(vector.X, vector.Y, consoleWindowWidth, consoleWindowHeight);
     };
-
 
     Vector2D NDCToScreenSpace(const Vector2D& vector, int consoleWindowWidth, int consoleWindowHeight)
     {
