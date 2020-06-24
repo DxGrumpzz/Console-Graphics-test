@@ -134,8 +134,8 @@ public:
     {
         using namespace VectorTransformer;
 
-        Vector2D screenSpaceVector1 = CartesianToScreenSpace(point1, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
-        Vector2D screenSpaceVector2 = CartesianToScreenSpace(point2, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
+        Vector2D screenSpaceVector1 = CartesianVectorToScreenSpace(point1, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
+        Vector2D screenSpaceVector2 = CartesianVectorToScreenSpace(point2, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
 
         DrawLine(screenSpaceVector1, screenSpaceVector2, lineColour);
     };
