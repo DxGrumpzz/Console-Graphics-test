@@ -5,6 +5,7 @@
 #include <string>
 #include <chrono>
 
+#include "Vector2D.hpp"
 
 enum class MouseKeyState
 {
@@ -316,6 +317,7 @@ public:
 
 
             end = std::chrono::steady_clock::now();
+
         };
     };
 
@@ -404,6 +406,96 @@ public:
         pixel.Char.UnicodeChar = character;
         pixel.Attributes = static_cast<WORD>(characterColour);
     };
+
+
+
+
+    /// <summary>
+    /// Draws a line segment between 2 points
+    /// </summary>
+    /// <param name="x1"> The beginning x coordinate </param>
+    /// <param name="y1"> The beginning y coordinate </param>
+    /// <param name="x2"> The ending x coordinate </param>
+    /// <param name="y2"> The ending y coordinate </param>
+    /// <param name="lineColour"> The colour of th line </param>
+    void DrawLine(float x1, float y1, float x2, float y2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
+    {
+        // Comments on this algorithm will be lacking.
+        // Because I am too shite at mathematics to understand what's going on here
+
+
+        // Calculate the rise and run
+        // (Slope and Y-intercept)
+        float rise = y2 - y1;
+        float run = x2 - x1;
+
+
+        // Check if the slope of the line is too low
+        if (abs(rise) > abs(run))
+        {
+            // Swap Y-coordinates without this, every part of the line under Y1 won't render
+            if (y1 > y2)
+            {
+                int tempX = x1;
+                int tempY = y1;
+
+                x1 = x2;
+                x2 = tempX;
+
+                y1 = y2;
+                y2 = tempY;
+            };
+
+            // The line drawing equation is y = mx * b
+            // But in this case we turn it upside-down so we're able to render
+
+            float w = (x2 - x1) / (y2 - y1);
+            float p = x1 - w * y1;
+
+            for (int y = y1; y <= y2; y++)
+            {
+                float x = w * y + p;
+
+                SetConsolePixel(x, y, lineColour);
+            };
+        }
+        else
+        {
+            if (rise == 0.0f && run == 0.0f)
+                return;
+
+            if (x1 > x2)
+            {
+                int tempX = x1;
+                int tempY = y1;
+
+                x1 = x2;
+                x2 = tempX;
+
+                y1 = y2;
+                y2 = tempY;
+            };
+
+
+            float m = rise / run;
+
+            float b = y1 - m * x1;
+
+            for (int x = x1; x <= x2; x++)
+            {
+                float y = m * x + b;
+
+                SetConsolePixel(x, y, lineColour);
+            };
+        };
+    };
+
+
+    void DrawLine(const Vector2D& point1, const Vector2D& point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
+    {
+        DrawLine(point1.X, point1.Y, point2.X, point2.Y, lineColour);
+    };
+
 
 
 public:
