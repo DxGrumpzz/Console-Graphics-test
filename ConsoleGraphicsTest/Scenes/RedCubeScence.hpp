@@ -99,7 +99,7 @@ public:
 
 
 
-        if (mouse.LeftMouseButton == MouseKeyState::Pressed && mouseOverPlayer == true)
+        if (mouse.LeftMouseButton == MouseKeyState::Held && mouseOverPlayer == true)
         {
             if (draggingPlayer == false)
             {
