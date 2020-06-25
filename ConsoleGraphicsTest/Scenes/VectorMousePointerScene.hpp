@@ -132,10 +132,10 @@ public:
 
     void DrawLineCartesian(const Vector2D& point1, const Vector2D& point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
     {
-        using namespace VectorTransformer;
+        VectorTransformer transformer(_consoleEngine);
 
-        Vector2D screenSpaceVector1 = CartesianVectorToScreenSpace(point1, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
-        Vector2D screenSpaceVector2 = CartesianVectorToScreenSpace(point2, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
+        Vector2D screenSpaceVector1 = transformer.CartesianVectorToScreenSpace(point1);
+        Vector2D screenSpaceVector2 = transformer.CartesianVectorToScreenSpace(point2);
 
         DrawLine(screenSpaceVector1, screenSpaceVector2, lineColour);
     };
@@ -146,11 +146,11 @@ public:
     {
         Mouse mouse = _consoleEngine.GetMouse();
 
-        using namespace VectorTransformer;
+        VectorTransformer transformer(_consoleEngine);
 
 
         Vector2D v0(0, 0);
-        Vector2D mouseCart = MouseToCartesian(mouse.X, mouse.Y, _consoleEngine.ConsoleWindowWidth, _consoleEngine.ConsoleWindowHeight);
+        Vector2D mouseCart = transformer.MouseToCartesian(mouse.X, mouse.Y);
 
         Vector2D v1 = mouseCart - v0;
 

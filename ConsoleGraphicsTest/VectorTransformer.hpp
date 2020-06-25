@@ -1,27 +1,50 @@
 #pragma once
 
 #include "Vector2D.hpp"
+#include "ConsoleEngine.hpp"
 
-namespace VectorTransformer
+class VectorTransformer
 {
+private:
 
-    Vector2D CartesianToScreenSpace(float x, float y, int consoleWindowWidth, int consoleWindowHeight)
+    int _consoleWindowWidth;
+    int _consoleWindowHeight;
+
+
+public:
+
+    VectorTransformer(int consoleWindowWidth, int consoleWindowHeight) :
+        _consoleWindowWidth(consoleWindowWidth),
+        _consoleWindowHeight(consoleWindowHeight)
     {
-        float screenSpaceX = x + (consoleWindowWidth / 2);
-        float screenSpaceY = (-y) + (consoleWindowHeight / 2);
+
+    };
+
+    VectorTransformer(const ConsoleEngine& consoleEngine) :
+        VectorTransformer::VectorTransformer(consoleEngine.ConsoleWindowWidth, consoleEngine.ConsoleWindowHeight)
+    {
+
+    };
+
+
+public:
+
+    Vector2D CartesianToScreenSpace(float x, float y)
+    {
+        float screenSpaceX = x + (_consoleWindowWidth / 2);
+        float screenSpaceY = (-y) + (_consoleWindowHeight / 2);
 
         return { screenSpaceX, screenSpaceY };
     };
 
-
-    Vector2D CartesianVectorToScreenSpace(const Vector2D& vector, int consoleWindowWidth, int consoleWindowHeight)
+    Vector2D CartesianVectorToScreenSpace(const Vector2D& vector)
     {
-        return CartesianToScreenSpace(vector.X, vector.Y, consoleWindowWidth, consoleWindowHeight);
+        return CartesianToScreenSpace(vector.X, vector.Y);
     };
 
-    Vector2D NDCToScreenSpace(const Vector2D& vector, int consoleWindowWidth, int consoleWindowHeight)
+    Vector2D NDCToScreenSpace(const Vector2D& vector)
     {
-        return { ((vector.X + 1.0f) * ((consoleWindowWidth) / 2)),  ((-vector.Y + 1.0f) * ((consoleWindowHeight) / 2)) };
+        return { ((vector.X + 1.0f) * ((_consoleWindowWidth) / 2)),  ((-vector.Y + 1.0f) * ((_consoleWindowHeight) / 2)) };
     };
 
 
@@ -30,9 +53,10 @@ namespace VectorTransformer
         return { static_cast<float>(x), static_cast<float>(y) };
     };
 
-    Vector2D MouseToCartesian(short x, short y, int consoleWindowWidth, int consoleWindowHeight)
+    Vector2D MouseToCartesian(short x, short y)
     {
-        return { static_cast<float>(x) - consoleWindowWidth / 2, -(static_cast<float>(y) - consoleWindowHeight / 2) };
+         // return { static_cast<float>(x) - _consoleWindowWidth / 2, -(static_cast<float>(y) - _consoleWindowHeight / 2) };
+        return { static_cast<float>(x) - (_consoleWindowWidth / 2), (static_cast<float>(-y)) + (_consoleWindowHeight / 2) };
     };
 
 };
