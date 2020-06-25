@@ -53,10 +53,22 @@ public:
         return { static_cast<float>(x), static_cast<float>(y) };
     };
 
+    Vector2D MouseToVector(const Mouse& mouse)
+    {
+        return { static_cast<float>(mouse.X), static_cast<float>(mouse.Y) };
+    };
+
+
     Vector2D MouseToCartesian(short x, short y)
     {
          // return { static_cast<float>(x) - _consoleWindowWidth / 2, -(static_cast<float>(y) - _consoleWindowHeight / 2) };
         return { static_cast<float>(x) - (_consoleWindowWidth / 2), (static_cast<float>(-y)) + (_consoleWindowHeight / 2) };
+    };
+    
+    Vector2D MouseToCartesian(const Mouse& mouse)
+    {
+        // return { static_cast<float>(x) - _consoleWindowWidth / 2, -(static_cast<float>(y) - _consoleWindowHeight / 2) };
+        return { static_cast<float>(mouse.X) - (_consoleWindowWidth / 2), (static_cast<float>(-mouse.Y)) + (_consoleWindowHeight / 2) };
     };
 
 };
