@@ -34,7 +34,7 @@ public:
     };
 
 
-    void Normalize()
+    Vector2D& Normalize()
     {
         float length = Length();
 
@@ -43,6 +43,8 @@ public:
             X *= (1.0f / length);
             Y *= (1.0f / length);
         };
+
+        return *this;
     };
 
 
@@ -64,10 +66,12 @@ public:
     };
 
 
-    void Scale(float scalar)
+    Vector2D& Scale(float scalar)
     {
         X *= scalar;
         Y *= scalar;
+
+        return *this;
     };
 
 
@@ -150,6 +154,7 @@ public:
 
         return *this;
     };
+
 
     #pragma endregion
 
