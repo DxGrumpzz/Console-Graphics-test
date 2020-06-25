@@ -4,19 +4,16 @@
 #include "Vector2D.hpp"
 
 
+/// <summary>
+/// A scene that draws an object that follows  the mouse around
+/// </summary>
 class ObjectFollowMouseScene : public IScence
 {
 
 private:
     ConsoleEngine& _consoleEngine;
 
-public:
-
-    ObjectFollowMouseScene(ConsoleEngine& consoleEngine) :
-        _consoleEngine(consoleEngine)
-    {
-
-    };
+    VectorTransformer _transformer;
 
 public:
 
@@ -25,75 +22,61 @@ public:
     Vector2D objectVelocity = { 6.0, 6.0f };
 
 
+public:
 
-    void KeyboardVelocity(float deltaTime)
+    ObjectFollowMouseScene(ConsoleEngine& consoleEngine) :
+        _consoleEngine(consoleEngine),
+        _transformer(_consoleEngine)
     {
-        if (GetAsyncKeyState(VK_LEFT))
-        {
-            objectPosition.X -= objectVelocity.X * deltaTime;
-        };
-
-        if (GetAsyncKeyState(VK_RIGHT))
-        {
-            objectPosition.X += objectVelocity.X * deltaTime;
-        };
-
-        if (GetAsyncKeyState(VK_UP))
-        {
-            objectPosition.Y += objectVelocity.Y * deltaTime;
-        };
-
-        if (GetAsyncKeyState(VK_DOWN))
-        {
-            objectPosition.Y -= objectVelocity.Y * deltaTime;
-        };
 
     };
 
 
-    void MouseVelocity(const Vector2D& v, float deltaTime)
+
+    void HandleInput(float deltaTime)
     {
-        objectPosition += (v * deltaTime);
-    };
-
-
-    void DrawLine(float deltaTime)
-    {
-        if (GetAsyncKeyState(VK_RETURN))
-        {
-            DebugBreak();
-        };
-
-        VectorTransformer transformer(_consoleEngine);
-
         Mouse mouse = _consoleEngine.GetMouse();
 
-        Vector2D mouseVector = transformer.MouseToCartesian(mouse);
+        Vector2D mouseVector = _transformer.MouseToCartesian(mouse);
 
+        // Just so we don't divide by zero, check if mouse pointer is inside the object's (0,0)
         if (mouse.X == objectPosition.X &&
             mouse.Y == objectPosition.Y)
             return;
 
-        Vector2D v1 = mouseVector - objectPosition;
-        v1.Normalize();
-        v1.Scale(4);
-
+        // Update velocity only if left mouse button is held down
         if (mouse.LeftMouseButton != MouseKeyState::Held)
             return;
 
+        // Update velocity based on the position of the mouse and object
+        objectVelocity = mouseVector - objectPosition;
 
-        objectPosition += (v1 * 2) * deltaTime;
+        // Normalize the velocity and scale it by 4 so we get a consistent speed
+        objectVelocity.Normalize();
+        objectVelocity.Scale(4);
+
+        // Update the velocity
+        objectPosition += (objectVelocity * 2) * deltaTime;
+
+    };
 
 
-        _consoleEngine.DrawLine(transformer.CartesianVectorToScreenSpace(objectPosition),
-                                transformer.CartesianVectorToScreenSpace(v1 + objectPosition), ConsoleEngine::ConsoleColour::RED);
+    void DrawLine()
+    {
+        Mouse mouse = _consoleEngine.GetMouse();
+
+        // Draw the line pointing to the mouse's cursor only if left mouse button is held down
+        if (mouse.LeftMouseButton == MouseKeyState::Held)
+        {
+            _consoleEngine.DrawLine(_transformer.CartesianVectorToScreenSpace(objectPosition),
+                                    _transformer.CartesianVectorToScreenSpace(objectVelocity + objectPosition), ConsoleEngine::ConsoleColour::RED);
+        };
     };
 
 
     void DrawObject()
     {
-        int radius = 8;
-        VectorTransformer transformer(_consoleEngine);
+        int radius = 5;
 
 
         // Draw a circle 
@@ -109,7 +92,7 @@ public:
                 {
                     // Convert the Cartesian position to screen space
                     // Vector2D position = { objectPosition.X, objectPosition.Y };
-                    Vector2D position = transformer.CartesianToScreenSpace(objectPosition.X, objectPosition.Y);
+                    Vector2D position = _transformer.CartesianToScreenSpace(objectPosition.X, objectPosition.Y);
 
                     // Draw the pixel
                     _consoleEngine.SetConsolePixel((x + position.X) - radius, (y + position.Y) - radius);
@@ -123,6 +106,8 @@ public:
 
     void DrawCartesianGrid()
     {
+        // Draw 2 lines going through the middle of the screen, emulates a cartesian grid
+
         for (int x = 0; x < _consoleEngine.ConsoleWindowWidth; x++)
         {
             _consoleEngine.SetConsolePixel(x, _consoleEngine.ConsoleWindowHeight / 2);
@@ -140,20 +125,19 @@ public:
     {
         //DrawCartesianGrid();
 
-        KeyboardVelocity(deltaTime);
+        // Hanlde user input
+        HandleInput(deltaTime);
 
+        // Draw the object 
         DrawObject();
 
-        DrawLine(deltaTime);
+        // Draw the vector pointing to the mouse's position after drawing the object so the line is visible
+        DrawLine();
 
-
+        // Draw a purple square at the position mouse's pointer
         Mouse mouse = _consoleEngine.GetMouse();
-
         _consoleEngine.SetConsolePixel(mouse.X, mouse.Y, ConsoleEngine::ConsoleColour::MAGENTA);
 
-
-
     };
-
 
 };
