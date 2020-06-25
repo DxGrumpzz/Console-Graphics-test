@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp" />
+    <ClInclude Include="ObjectFollowMouseScene.hpp" />
     <ClInclude Include="VectorTransformer.hpp" />
     <ClInclude Include="Scenes\VectorMousePointerScene.hpp" />
     <ClInclude Include="Scenes\IScence.hpp" />

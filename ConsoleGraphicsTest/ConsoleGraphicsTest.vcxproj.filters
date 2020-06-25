@@ -28,5 +28,8 @@
     <ClInclude Include="Scenes\VectorMousePointerScene.hpp">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectFollowMouseScene.hpp">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
