@@ -109,7 +109,7 @@ int main()
     scenes.emplace_back(new VectorMousePointerScene(*consoleEngine));
     scenes.emplace_back(new ObjectFollowMouseScene(*consoleEngine));
 
-    currentScene = scenes.end();
+    currentScene = scenes.end() -1;
 
     consoleEngine->Run();
 
