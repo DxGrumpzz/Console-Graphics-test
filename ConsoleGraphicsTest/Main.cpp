@@ -5,17 +5,16 @@
 
 #include "RedCubeScence.hpp"
 #include "VectorMousePointerScene.hpp"
+#include "ObjectFollowMouseScene.hpp"
 
 #include "IScence.hpp"
-
-
 
 
 int consoleWindowWidh = 50;
 int consoleWindowHeight = 50;
 
 short fontWidth = 10;
-short fontHeight = 10;
+short fontHeight =10;
 
 /// <summary>
 /// The list of scenes
@@ -108,8 +107,9 @@ int main()
 
     scenes.emplace_back(new RedCubeScence(*consoleEngine));
     scenes.emplace_back(new VectorMousePointerScene(*consoleEngine));
+    scenes.emplace_back(new ObjectFollowMouseScene(*consoleEngine));
 
-    currentScene = scenes.begin();// +1;
+    currentScene = scenes.end();
 
     consoleEngine->Run();
 
