@@ -1,4 +1,4 @@
-﻿#include <math.h>
+#include <math.h>
 #include <vector>
 
 #include "ConsoleEngine.hpp"
@@ -90,7 +90,7 @@ bool GameLoop(float deltaTime, ConsoleEngine& consoleEngine)
 {
     CycleScences();
 
-    (*currentScene)->DrawScence(deltaTime);
+    (*currentScene)->DrawScene(deltaTime);
 
     return true;
 };

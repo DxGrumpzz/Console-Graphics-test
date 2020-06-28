@@ -11,6 +11,6 @@ public:
     /// Draw the current scence
     /// </summary>
     /// <param name="deltaTime"> Time passed between frames </param>
-    virtual void DrawScence(float deltaTime) = 0;
+    virtual void DrawScene(float deltaTime) = 0;
 
 };

@@ -31,5 +31,8 @@
     <ClInclude Include="ObjectFollowMouseScene.hpp">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="SineScene.hpp">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

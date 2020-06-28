@@ -315,7 +315,7 @@ public:
 
 public:
 
-    virtual void DrawScence(float deltaTime) override
+    virtual void DrawScene(float deltaTime) override
     {
         HandleInput(deltaTime, _consoleEngine);
 
