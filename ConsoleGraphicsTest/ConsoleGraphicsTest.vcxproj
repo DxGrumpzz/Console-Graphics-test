@@ -154,6 +154,7 @@
     <ClCompile Include="Main.cpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Math\VectorTransformer.hpp" />
+    <ClInclude Include="Object.hpp" />
     <ClInclude Include="SineScene.hpp" />
   </ItemGroup>
   <ItemGroup>

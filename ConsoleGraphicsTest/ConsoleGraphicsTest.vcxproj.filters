@@ -13,6 +13,9 @@
     <Filter Include="Math">
       <UniqueIdentifier>{8075034e-d884-4247-a493-264b7b60fbff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\SineScene">
+      <UniqueIdentifier>{231ce21d-c4d6-4276-9c2d-e417b2c4dde3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp">
@@ -33,14 +36,17 @@
     <ClInclude Include="ObjectFollowMouseScene.hpp">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="SineScene.hpp">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Math.hpp">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="Math\VectorTransformer.hpp">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="SineScene.hpp">
+      <Filter>Scenes\SineScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.hpp">
+      <Filter>Scenes\SineScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
