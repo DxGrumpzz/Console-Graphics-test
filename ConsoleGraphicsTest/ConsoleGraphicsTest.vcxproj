@@ -78,11 +78,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)Console engine;$(ProjectDir)Scenes;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)Console engine;$(ProjectDir)Scenes;$(ProjectDir)Math</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)Console engine;$(ProjectDir)Scenes;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)Console engine;$(ProjectDir)Scenes;$(ProjectDir)Math</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Console engine;$(ProjectDir)Scenes;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Console engine;$(ProjectDir)Scenes;$(ProjectDir)Math</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
     </ClCompile>
@@ -139,7 +139,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Console engine;$(ProjectDir)Scenes;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Console engine;$(ProjectDir)Scenes;$(ProjectDir)Math</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
     </ClCompile>
@@ -152,12 +152,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Math\VectorTransformer.hpp" />
     <ClInclude Include="SineScene.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp" />
     <ClInclude Include="ObjectFollowMouseScene.hpp" />
-    <ClInclude Include="VectorTransformer.hpp" />
     <ClInclude Include="Scenes\VectorMousePointerScene.hpp" />
     <ClInclude Include="Scenes\IScence.hpp" />
     <ClInclude Include="Scenes\RedCubeScence.hpp" />

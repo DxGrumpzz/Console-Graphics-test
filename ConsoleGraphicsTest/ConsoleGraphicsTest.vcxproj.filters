@@ -10,6 +10,9 @@
     <Filter Include="Scenes">
       <UniqueIdentifier>{985d11c7-a302-4514-ad6e-ac8dca6f2112}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{8075034e-d884-4247-a493-264b7b60fbff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp">
@@ -24,7 +27,6 @@
     <ClInclude Include="Vector2D.hpp">
       <Filter>Console engine</Filter>
     </ClInclude>
-    <ClInclude Include="VectorTransformer.hpp" />
     <ClInclude Include="Scenes\VectorMousePointerScene.hpp">
       <Filter>Scenes</Filter>
     </ClInclude>
@@ -33,6 +35,12 @@
     </ClInclude>
     <ClInclude Include="SineScene.hpp">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\VectorTransformer.hpp">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
