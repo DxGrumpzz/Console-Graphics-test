@@ -1,4 +1,4 @@
-#include <math.h>
+﻿#include <math.h>
 #include <vector>
 
 #include "ConsoleEngine.hpp"
@@ -6,6 +6,7 @@
 #include "RedCubeScence.hpp"
 #include "VectorMousePointerScene.hpp"
 #include "ObjectFollowMouseScene.hpp"
+#include "SineScene.hpp"
 
 #include "IScence.hpp"
 
@@ -108,6 +109,7 @@ int main()
     scenes.emplace_back(new RedCubeScence(*consoleEngine));
     scenes.emplace_back(new VectorMousePointerScene(*consoleEngine));
     scenes.emplace_back(new ObjectFollowMouseScene(*consoleEngine));
+    scenes.emplace_back(new SineScene(*consoleEngine));
 
     currentScene = scenes.end() -1;
 
