@@ -3,7 +3,7 @@
 #include "VectorTransformer.hpp"
 #include "ConsoleEngine.hpp"
 #include "IScence.hpp"
-
+#include "Math.hpp"
 
 class Object
 {
@@ -73,12 +73,8 @@ public:
         _cosAccumulator += deltaTime * _rotationSpeed;
 
 
-        WrapAngle(_sinAccumulator);
-        WrapAngle(_cosAccumulator);
-
-
-        WrapAngle(_sinAccumulator);
-        WrapAngle(_cosAccumulator);
+        Math::WrapAngle(_sinAccumulator);
+        Math::WrapAngle(_cosAccumulator);
 
 
         int radiusSquared = Radius * Radius;
@@ -113,13 +109,6 @@ public:
         };
     };
 
-
-    void WrapAngle(float& angle)
-    {
-        if (angle > ((22.0 / 7.0) * 2))
-            angle -= angle;
-    };
-
 };
 
 
@@ -134,7 +123,6 @@ private:
 
 public:
 
-    constexpr static long double PI = 22.0 / 7.0;
 
 public:
 
@@ -146,6 +134,8 @@ public:
         _consoleEngine(consoleEngine),
         _transformer(consoleEngine)
     {
+        using namespace Math;
+
         objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::RED,   1, 3.0f, 3.0f, PI/2, PI/2);
         objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::GREEN, 1, 3.0f, 3.0f, 7 * PI / 6, 7 * PI / 6);
         objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::BLUE,  1, 3.0f, 3.0f, 11 * PI / 6, 11 * PI / 6);
@@ -187,12 +177,6 @@ private:
         debugString.append(L"\n");
 
         _consoleEngine.DrawConsoleText(0, 0, debugString.c_str());
-    };
-
-
-    float DegressToRadians(float degrees)
-    {
-        return degrees * PI / 180.0f;
     };
 
 };
