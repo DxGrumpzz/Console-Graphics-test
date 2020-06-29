@@ -7,6 +7,9 @@
 #include "Object.hpp"
 
 
+/// <summary>
+/// A sine test scene used to see how sine-cosine works
+/// </summary>
 class SineScene : public IScence
 {
 
@@ -18,6 +21,9 @@ private:
 
 public:
 
+    /// <summary>
+    /// A list of objects that will be displayed
+    /// </summary>
     std::vector<Object> objects;
 
 
@@ -29,6 +35,7 @@ public:
     {
         using namespace Math;
 
+        // Populate the objects list
         float rotationSpeed = 3.0f;
         float rotationRadiusSize = 12.0f;
         float objectRadius = 1.0f;
@@ -45,7 +52,6 @@ public:
         Mouse mouse = _consoleEngine.GetMouse();
 
         Vector2D mouseVector = _transformer.MouseToCartesian(mouse);
-
 
         for (Object& object : objects)
         {
@@ -64,11 +70,17 @@ public:
 
 private:
 
+
+    /// <summary>
+    /// Draws the objects with lines attached
+    /// </summary>
     void DrawSpinningCubesWithLines()
     {
+        // Get mouse position and convert it to a Cartesian vector
         Mouse mouse = _consoleEngine.GetMouse();
         Vector2D mouseVector = _transformer.MouseToCartesian(mouse);
 
+        // Draw the object and lines from the object's position to the mouse 
         for (Object& object : objects)
         {
             if (mouse.X != 0 && mouse.Y != 0)
@@ -81,6 +93,9 @@ private:
     };
 
 
+    /// <summary>
+    /// Draw the objects spinning around the mouse
+    /// </summary>
     void DrawSpinningCubes()
     {
         for (Object& object : objects)

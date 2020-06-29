@@ -7,6 +7,10 @@ class IScence
 {
 public:
 
+    /// <summary>
+    /// Handle inputs, collisions, and everything else that should'nt be in the DrawScene function
+    /// </summary>
+    /// <param name="deltaTime"></param>
     virtual void UpdateScene(float deltaTime) = 0;
 
     /// <summary>
