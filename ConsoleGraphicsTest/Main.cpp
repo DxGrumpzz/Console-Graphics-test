@@ -7,15 +7,16 @@
 #include "VectorMousePointerScene.hpp"
 #include "ObjectFollowMouseScene.hpp"
 #include "SineScene.hpp"
+#include "DisplayBitmapScene.hpp"
 
 #include "IScene.hpp"
 
 
-int consoleWindowWidh = 50;
-int consoleWindowHeight = 50;
+int consoleWindowWidh = 512;
+int consoleWindowHeight = 175;
 
-short fontWidth = 10;
-short fontHeight =10;
+short fontWidth = 3;
+short fontHeight = 3;
 
 /// <summary>
 /// The list of scenes
@@ -111,6 +112,7 @@ int main()
     scenes.emplace_back(new VectorMousePointerScene(*consoleEngine));
     scenes.emplace_back(new ObjectFollowMouseScene(*consoleEngine));
     scenes.emplace_back(new SineScene(*consoleEngine));
+    scenes.emplace_back(new DisplayBitmapScene(*consoleEngine));
 
     currentScene = scenes.end() -1;
 

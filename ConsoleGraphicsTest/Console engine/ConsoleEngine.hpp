@@ -372,13 +372,24 @@ public:
     /// <param name="x"> The pixel's x position </param>
     /// <param name="y"> The pixel's y position </param>
     /// <param name="pixelColour"> Which colour to draw the pixel in </param>
-    void SetConsolePixel(int x, int y, ConsoleColour pixelColour = ConsoleColour::WHITE)
+    void SetConsolePixel(int x, int y, ConsoleColour pixelColour = ConsoleColour::WHITE, bool checkBounds = true)
     {
-        if (x < 0 || x > ConsoleWindowWidth)
-            throw std::exception("X is out of bounds");
+        if (checkBounds == true)
+        {
+            if (x < 0 || x > ConsoleWindowWidth)
+                throw std::exception("X is out of bounds");
 
-        if (y < 0 || y > ConsoleWindowHeight)
-            throw std::exception("Y is out of bounds");
+            if (y < 0 || y > ConsoleWindowHeight)
+                throw std::exception("Y is out of bounds");
+        }
+        else
+        {
+            if (x < 0 || x > ConsoleWindowWidth)
+                return;
+
+            if (y < 0 || y > ConsoleWindowHeight)
+                return;
+        };
 
 
         // Get a CHAR_INFO reference to the pointer located at the x and y position

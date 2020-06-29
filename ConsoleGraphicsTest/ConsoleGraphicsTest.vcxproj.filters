@@ -16,6 +16,9 @@
     <Filter Include="Scenes\SineScene">
       <UniqueIdentifier>{231ce21d-c4d6-4276-9c2d-e417b2c4dde3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{2546374c-f60b-4349-adc7-8a45c1be1eb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console engine\ConsoleEngine.hpp">
@@ -51,5 +54,10 @@
     <ClInclude Include="Scenes\IScene.hpp">
       <Filter>Scenes</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Fixedsys16x28.bmp">
+      <Filter>Resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>
