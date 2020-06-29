@@ -1,10 +1,10 @@
 #pragma once
 
-#include "IScence.hpp"
+#include "IScene.hpp"
 #include "ConsoleEngine.hpp"
 
 
-class RedCubeScence : public IScence
+class RedCubeScence : public IScene
 {
 
 private:

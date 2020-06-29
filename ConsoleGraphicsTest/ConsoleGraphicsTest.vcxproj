@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DisplayBitmapScene.hpp" />
     <ClCompile Include="Main.cpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Math\VectorTransformer.hpp" />
@@ -161,7 +162,7 @@
     <ClInclude Include="Console engine\ConsoleEngine.hpp" />
     <ClInclude Include="ObjectFollowMouseScene.hpp" />
     <ClInclude Include="Scenes\VectorMousePointerScene.hpp" />
-    <ClInclude Include="Scenes\IScence.hpp" />
+    <ClInclude Include="Scenes\IScene.hpp" />
     <ClInclude Include="Scenes\RedCubeScence.hpp" />
     <ClInclude Include="Vector2D.hpp" />
   </ItemGroup>

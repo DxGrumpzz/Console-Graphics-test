@@ -3,7 +3,7 @@
 /// <summary>
 /// An interface for a game scene
 /// </summary>
-class IScence
+class IScene
 {
 public:
 

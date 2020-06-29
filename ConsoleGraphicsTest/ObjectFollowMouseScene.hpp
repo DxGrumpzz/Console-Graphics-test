@@ -1,13 +1,13 @@
 #pragma once
 #include "ConsoleEngine.hpp"
-#include "IScence.hpp"
+#include "IScene.hpp"
 #include "Vector2D.hpp"
 
 
 /// <summary>
 /// A scene that draws an object that follows  the mouse around
 /// </summary>
-class ObjectFollowMouseScene : public IScence
+class ObjectFollowMouseScene : public IScene
 {
 
 private:

@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include "IScence.hpp"
+#include "IScene.hpp"
 #include "ConsoleEngine.hpp"
 #include "Vector2D.hpp"
 #include "VectorTransformer.hpp"
 
 
 
-class VectorMousePointerScene : public IScence
+class VectorMousePointerScene : public IScene
 {
 
 private:

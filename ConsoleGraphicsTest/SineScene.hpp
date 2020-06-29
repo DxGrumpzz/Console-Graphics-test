@@ -2,7 +2,7 @@
 
 #include "VectorTransformer.hpp"
 #include "ConsoleEngine.hpp"
-#include "IScence.hpp"
+#include "IScene.hpp"
 #include "Math.hpp"
 #include "Object.hpp"
 
@@ -10,7 +10,7 @@
 /// <summary>
 /// A sine test scene used to see how sine-cosine works
 /// </summary>
-class SineScene : public IScence
+class SineScene : public IScene
 {
 
 private:

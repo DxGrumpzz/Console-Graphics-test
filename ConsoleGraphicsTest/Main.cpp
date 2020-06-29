@@ -8,7 +8,7 @@
 #include "ObjectFollowMouseScene.hpp"
 #include "SineScene.hpp"
 
-#include "IScence.hpp"
+#include "IScene.hpp"
 
 
 int consoleWindowWidh = 50;
@@ -20,12 +20,12 @@ short fontHeight =10;
 /// <summary>
 /// The list of scenes
 /// </summary>
-std::vector<IScence*> scenes;
+std::vector<IScene*> scenes;
 
 /// <summary>
 /// The currently drawn scene
 /// </summary>
-std::vector<IScence*>::iterator currentScene;
+std::vector<IScene*>::iterator currentScene;
 
 
 bool leftBracketKeyPressed = false;

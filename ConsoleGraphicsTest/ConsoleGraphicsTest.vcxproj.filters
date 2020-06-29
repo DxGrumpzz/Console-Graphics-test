@@ -21,9 +21,6 @@
     <ClInclude Include="Console engine\ConsoleEngine.hpp">
       <Filter>Console engine</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\IScence.hpp">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Scenes\RedCubeScence.hpp">
       <Filter>Scenes</Filter>
     </ClInclude>
@@ -47,6 +44,12 @@
     </ClInclude>
     <ClInclude Include="Object.hpp">
       <Filter>Scenes\SineScene</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayBitmapScene.hpp">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\IScene.hpp">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
