@@ -30,27 +30,17 @@ public:
         using namespace Math;
 
         float rotationSpeed = 3.0f;
-        objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::RED,   1, 3.0f, rotationSpeed , PI / 2, PI / 2);
-        objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::GREEN, 1, 3.0f, rotationSpeed , 7 * PI / 6, 7 * PI / 6);
-        objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::BLUE,  1, 3.0f, rotationSpeed , 11 * PI / 6, 11 * PI / 6);
+        float rotationRadiusSize = 12.0f;
+        float objectRadius = 1.0f;
+
+        objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::RED,   objectRadius, rotationRadiusSize, rotationSpeed, PI / 2, PI / 2);
+        objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::GREEN, objectRadius, rotationRadiusSize, rotationSpeed, 7 * PI / 6, 7 * PI / 6);
+        objects.emplace_back(consoleEngine, ConsoleEngine::ConsoleColour::BLUE,  objectRadius, rotationRadiusSize, rotationSpeed, 11 * PI / 6, 11 * PI / 6);
     };
 
 public:
-    
+
     virtual void UpdateScene(float deltaTime) override
-    {
-        DrawSpinningCubesWithLines(deltaTime);
-    };
-
-    virtual void DrawScene() override
-    {
-        //DrawSpinningCubesWithLines(deltaTime);
-    };
-
-
-private:
-
-    void DrawSpinningCubesWithLines(float deltaTime)
     {
         Mouse mouse = _consoleEngine.GetMouse();
 
@@ -62,38 +52,41 @@ private:
             object.Position = mouseVector;
 
             object.Update(deltaTime);
+        };
+    };
 
+    virtual void DrawScene() override
+    {
+        DrawSpinningCubesWithLines();
+        // DrawSpinningCubes();
+    };
+
+
+private:
+
+    void DrawSpinningCubesWithLines()
+    {
+        Mouse mouse = _consoleEngine.GetMouse();
+        Vector2D mouseVector = _transformer.MouseToCartesian(mouse);
+
+        for (Object& object : objects)
+        {
             if (mouse.X != 0 && mouse.Y != 0)
                 _consoleEngine.DrawLine(_transformer.CartesianVectorToScreenSpace(object.Position),
                                         _transformer.CartesianVectorToScreenSpace(mouseVector),
                                         object.ObjectColour);
 
             object.DrawObject();
-
         };
-
     };
 
 
-    void DrawSpinningCubes(float deltaTime)
+    void DrawSpinningCubes()
     {
-        Mouse mouse = _consoleEngine.GetMouse();
-
-        Vector2D mouseVector = _transformer.MouseToCartesian(mouse);
-
-
-
         for (Object& object : objects)
         {
-            object.Position = mouseVector;
-
-            object.Update(deltaTime);
-
             object.DrawObject();
         };
-
-
-        DrawDebugString(deltaTime);
     };
 
 
