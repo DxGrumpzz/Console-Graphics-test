@@ -90,46 +90,26 @@ public:
 
         int padding = (4 - _bmpWidth % 4) % 4;
 
-        int a = 0;
-        int b = 0;
+        fontFile.seekg(pixelDataOffset);
 
-        for (size_t y = 0; y < _bmpHeight; y++)
+        for (long long y = _bmpHeight; y >= 0; y--)
         {
-            for (size_t x = 0; x < _bmpWidth; x++)
+            for (long long x = 0; x < _bmpWidth; x++)
             {
-                _pixelData[a].Red = pixelDataPointer[b];
-                _pixelData[a].Green = pixelDataPointer[b++];
-                _pixelData[a].Blue = pixelDataPointer[b++];
-                a++;
+                int position = x + _bmpWidth * y;
+
+                Colour c;
+                c.Red = fontFile.get();
+                c.Green = fontFile.get();
+                c.Blue = fontFile.get();
+
+                _pixelData[position] = c;
+
             };
 
-            b += padding;
+            fontFile.seekg(padding, std::ios::cur);
         };
 
-
-        /*
-        size_t pixelDataIndexer = 0;
-        for (size_t y = 0; y < _bmpWHeight; y++)//+= 4)
-        {
-            size_t rowSize = (bitsPerPixel * _bmpWidth / 32) * 4;
-
-            for (size_t x = 0; x < rowSize; x++)//+= 4)
-            {
-                uint8_t* p = &pixelDataPointer[x + _bmpWidth * y];
-
-                unsigned int pp = Read4Bytes(p);
-
-                _pixelData[pixelDataIndexer] = pp;
-
-                int ss = 0;
-                pixelDataIndexer++;
-            };
-        };
-        */
-
-
-        //delete[] pixelData;
-        //pixelData = nullptr;
 
         delete[] dibHeader;
         dibHeader = nullptr;
@@ -178,13 +158,13 @@ public:
                     colour.Green == 255 &&
                     colour.Blue  == 255)
                 {
-                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::RED, false);
+                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::WHITE, false);
                 }
                 else if (colour.Red   == 0 &&
                          colour.Green == 0 &&
                          colour.Blue  == 0)
                 {
-                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::GREEN, false);
+                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::BLACK, false);
                 }
                 else
                 {
