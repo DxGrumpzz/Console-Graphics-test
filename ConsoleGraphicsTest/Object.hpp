@@ -60,7 +60,7 @@ public:
 
 public:
 
-    void DrawObject(float deltaTime)
+    void Update(float deltaTime)
     {
         float sinResult = sin(_sinAccumulator);
         float cosResult = -cos(_cosAccumulator);
@@ -76,8 +76,10 @@ public:
 
         Math::WrapAngle(_sinAccumulator);
         Math::WrapAngle(_cosAccumulator);
+    };
 
-
+    void DrawObject()
+    {
         int radiusSquared = Radius * Radius;
 
         // Draw a circle
