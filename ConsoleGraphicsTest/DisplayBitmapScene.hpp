@@ -7,15 +7,26 @@
 
 class DisplayBitmapScene : public IScene
 {
+private:
+
+    struct Colour
+    {
+        uint8_t Red;
+        uint8_t Green;
+        uint8_t Blue;
+    };
 
 private:
     ConsoleEngine& _consoleEngine;
 
-    unsigned int* _pixelData;
+    Colour* _pixelData;
     size_t _pixelDataCount;
 
     unsigned int _bmpWidth = 0;
-    unsigned int _bmpWHeight = 0;
+    unsigned int _bmpHeight = 0;
+
+
+private:
 
 public:
 
@@ -48,22 +59,13 @@ public:
         memcpy_s(bitmapHeader, 14, fileBytes, 14);
 
 
-        unsigned short DIB_Header = Read2Bytes(&bitmapHeader[0]);
-
-        // DIB header equals to BM
-        if (DIB_Header == (0x42 | 0x4D))
-        {
-            int s = 0;
-        };
-
-
         unsigned int dibHeaderSize = Read4Bytes(&fileBytes[14]);
 
         uint8_t* dibHeader = new uint8_t[dibHeaderSize] { 0 };
         memcpy_s(dibHeader, dibHeaderSize, &fileBytes[14], dibHeaderSize);
 
         _bmpWidth = Read4Bytes(&dibHeader[4]);
-        _bmpWHeight = Read4Bytes(&dibHeader[8]);
+        _bmpHeight = Read4Bytes(&dibHeader[8]);
 
         unsigned int horizontalResolution = Read4Bytes(&fileBytes[38]);
         unsigned int verticalResolution = Read4Bytes(&fileBytes[42]);
@@ -75,24 +77,43 @@ public:
         unsigned int imageSize = Read4Bytes(&fileBytes[34]);
 
 
-        unsigned int pixelDataOffset = 14 + dibHeaderSize + numberOfColoursInColourPallete;
+        unsigned int pixelDataOffset = Read4Bytes(&fileBytes[10]);
 
 
-        _pixelDataCount = static_cast<size_t>(_bmpWidth) * static_cast<size_t>(_bmpWHeight);
+        _pixelDataCount = imageSize;// static_cast<size_t>(_bmpWidth)* static_cast<size_t>(_bmpWHeight);
 
-        _pixelData = new unsigned int[_pixelDataCount]
-        {
-            0
-        };
+        _pixelData = new Colour[_pixelDataCount * sizeof(Colour)] { 0 };
 
 
         uint8_t* pixelDataPointer = &fileBytes[pixelDataOffset];
 
 
-        size_t pixelDataIndexer = 0;
-        for (size_t y = 0; y < _bmpWHeight - 1; y += 4)
+        int padding = (4 - _bmpWidth % 4) % 4;
+
+        int a = 0;
+        int b = 0;
+
+        for (size_t y = 0; y < _bmpHeight; y++)
         {
-            for (size_t x = 0; x < _bmpWidth - 1; x += 4)
+            for (size_t x = 0; x < _bmpWidth; x++)
+            {
+                _pixelData[a].Red = pixelDataPointer[b];
+                _pixelData[a].Green = pixelDataPointer[b++];
+                _pixelData[a].Blue = pixelDataPointer[b++];
+                a++;
+            };
+
+            b += padding;
+        };
+
+
+        /*
+        size_t pixelDataIndexer = 0;
+        for (size_t y = 0; y < _bmpWHeight; y++)//+= 4)
+        {
+            size_t rowSize = (bitsPerPixel * _bmpWidth / 32) * 4;
+
+            for (size_t x = 0; x < rowSize; x++)//+= 4)
             {
                 uint8_t* p = &pixelDataPointer[x + _bmpWidth * y];
 
@@ -104,7 +125,7 @@ public:
                 pixelDataIndexer++;
             };
         };
-
+        */
 
 
         //delete[] pixelData;
@@ -142,30 +163,58 @@ public:
 
     virtual void DrawScene() override
     {
-        int imageXPos = 0;
-        int imageYPos = 0;
+        int imageXPos = 5;
+        int imageYPos = 5;
 
+        for (size_t x = 0; x < _bmpWidth; x++)
+        {
+            for (size_t y = 0; y < _bmpHeight; y++)
+            {
+                size_t pixelDataIndexer = x + _bmpWidth * y;
+
+                Colour& colour = _pixelData[pixelDataIndexer];
+
+                if (colour.Red   == 255 &&
+                    colour.Green == 255 &&
+                    colour.Blue  == 255)
+                {
+                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::RED, false);
+                }
+                else if (colour.Red   == 0 &&
+                         colour.Green == 0 &&
+                         colour.Blue  == 0)
+                {
+                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::GREEN, false);
+                }
+                else
+                {
+                    int s = 0;
+                };
+            };
+        };
+
+
+        /*
         size_t pixelDataIndexer = 0;
-        for (size_t y = 0; y < _bmpWHeight - 1; y += 4)
+        for (size_t y = 0; y < _bmpHeight - 1; y += 4)
         {
             for (size_t x = 0; x < _bmpWidth - 1; x += 4)
             {
-                uint8_t alpha = _pixelData[pixelDataIndexer];
-                uint8_t red =   _pixelData[pixelDataIndexer] >> 8;
-                uint8_t green = _pixelData[pixelDataIndexer] >> 8 * 2;
-                uint8_t blue =  _pixelData[pixelDataIndexer] >> 8 * 3;
+                uint8_t red = _pixelData[pixelDataIndexer];
+                uint8_t green = _pixelData[pixelDataIndexer] >> 8;
+                uint8_t blue = _pixelData[pixelDataIndexer] >> 8 * 2;
 
                 if (red == 255 &&
                     green == 255 &&
                     blue == 255)
                 {
-                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::WHITE, false);
+                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::RED, false);
                 }
                 else if (red == 0 &&
                          green == 0 &&
                          blue == 0)
                 {
-                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::BLACK, false);
+                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::GREEN, false);
                 }
                 else
                 {
@@ -175,6 +224,7 @@ public:
                 pixelDataIndexer++;
             };
         };
+        */
 
 
         //_consoleEngine.DrawConsoleText(0, 0, L"Bitmap scene");

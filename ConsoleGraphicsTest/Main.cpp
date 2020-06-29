@@ -12,7 +12,7 @@
 #include "IScene.hpp"
 
 
-int consoleWindowWidh = 512;
+int consoleWindowWidh = 550;
 int consoleWindowHeight = 175;
 
 short fontWidth = 3;
