@@ -44,121 +44,30 @@ public:
         _consoleEngine.SetConsolePixel(static_cast<int>(screenX), static_cast<int>(screenY), pixelColour);
     };
 
-
-    /// <summary>
-    /// Draws a line segment between 2 points
-    /// </summary>
-    /// <param name="x1"> The beginning x coordinate </param>
-    /// <param name="y1"> The beginning y coordinate </param>
-    /// <param name="x2"> The ending x coordinate </param>
-    /// <param name="y2"> The ending y coordinate </param>
-    /// <param name="lineColour"> The colour of th line </param>
-    void DrawLine(float x1, float y1, float x2, float y2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
-    {
-        // Comments on this algorithm will be lacking.
-        // Because I am too shite at mathematics to understand what's going on here
+    Vector2D v0 = { 0, 0 };
+    Vector2D v1 = { 0, 0 };
 
 
-        // Calculate the rise and run
-        // (Slope and Y-intercept)
-        float rise = y2 - y1;
-        float run = x2 - x1;
-
-
-        // Check if the slope of the line is too low
-        if (abs(rise) > abs(run))
-        {
-            // Swap Y-coordinates without this, every part of the line under Y1 won't render
-            if (y1 > y2)
-            {
-                int tempX = x1;
-                int tempY = y1;
-
-                x1 = x2;
-                x2 = tempX;
-
-                y1 = y2;
-                y2 = tempY;
-            };
-
-            // The line drawing equation is y = mx * b
-            // But in this case we turn it upside-down so we're able to render
-
-            float w = (x2 - x1) / (y2 - y1);
-            float p = x1 - w * y1;
-
-            for (int y = y1; y <= y2; y++)
-            {
-                float x = w * y + p;
-
-                _consoleEngine.SetConsolePixel(x, y);
-            };
-        }
-        else
-        {
-            if (x1 > x2)
-            {
-                int tempX = x1;
-                int tempY = y1;
-
-                x1 = x2;
-                x2 = tempX;
-
-                y1 = y2;
-                y2 = tempY;
-            };
-
-
-            float m = rise / run;
-
-            float b = y1 - m * x1;
-
-            for (int x = x1; x <= x2; x++)
-            {
-                float y = m * x + b;
-
-
-                _consoleEngine.SetConsolePixel(x, y);
-
-            };
-        };
-    };
-
-    void DrawLine(const Vector2D& point1, const Vector2D& point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
-    {
-        DrawLine(point1.X, point1.Y, point2.X, point2.Y, lineColour);
-    };
-
-
-    void DrawLineCartesian(const Vector2D& point1, const Vector2D& point2, ConsoleEngine::ConsoleColour lineColour = ConsoleEngine::ConsoleColour::WHITE)
-    {
-        VectorTransformer transformer(_consoleEngine);
-
-        Vector2D screenSpaceVector1 = transformer.CartesianVectorToScreenSpace(point1);
-        Vector2D screenSpaceVector2 = transformer.CartesianVectorToScreenSpace(point2);
-
-        DrawLine(screenSpaceVector1, screenSpaceVector2, lineColour);
-    };
-
-
-
-    virtual void DrawScene(float deltaTime) override
+    virtual void UpdateScene(float deltaTime) override
     {
         Mouse mouse = _consoleEngine.GetMouse();
 
         VectorTransformer transformer(_consoleEngine);
 
-
-        Vector2D v0(0, 0);
         Vector2D mouseCart = transformer.MouseToCartesian(mouse.X, mouse.Y);
 
-        Vector2D v1 = mouseCart - v0;
+        v1 = mouseCart - v0;
 
         v1.Normalize();
 
         v1.Scale(6.0f);
+    };
 
-        DrawLineCartesian(v0, v1);
+    virtual void DrawScene() override
+    {
+        VectorTransformer transformer(_consoleEngine);
+
+        _consoleEngine.DrawLine(transformer.CartesianVectorToScreenSpace(v0), transformer.CartesianVectorToScreenSpace(v1));
     };
 
 };

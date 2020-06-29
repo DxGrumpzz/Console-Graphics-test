@@ -91,7 +91,8 @@ bool GameLoop(float deltaTime, ConsoleEngine& consoleEngine)
 {
     CycleScences();
 
-    (*currentScene)->DrawScene(deltaTime);
+    (*currentScene)->UpdateScene(deltaTime);
+    (*currentScene)->DrawScene();
 
     return true;
 };

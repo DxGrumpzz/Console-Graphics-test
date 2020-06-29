@@ -314,14 +314,17 @@ public:
 
 
 public:
-
-    virtual void DrawScene(float deltaTime) override
+    virtual void UpdateScene(float deltaTime) override
     {
         HandleInput(deltaTime, _consoleEngine);
-
+      
         HandleCollisions(deltaTime, _consoleEngine);
-
+      
         HandleVelocity(deltaTime);
+    };
+
+    virtual void DrawScene() override
+    {
 
         _consoleEngine.DrawConsoleText(0, 0, L"Red cube scence", ConsoleEngine::ConsoleColour::RED);
 

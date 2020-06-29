@@ -121,12 +121,16 @@ public:
     };
 
 
-    virtual void DrawScene(float deltaTime) override
+    virtual void UpdateScene(float deltaTime) override
     {
-        //DrawCartesianGrid();
-
         // Hanlde user input
         HandleInput(deltaTime);
+    };
+
+
+    virtual void DrawScene() override
+    {
+        //DrawCartesianGrid();
 
         // Draw the object 
         DrawObject();
