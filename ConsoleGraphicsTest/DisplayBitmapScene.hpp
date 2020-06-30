@@ -12,13 +12,106 @@ class DisplayBitmapScene : public IScene
 {
 private:
 
-    struct Sprite
+    class Sprite
     {
+
+    private:
+        ConsoleEngine& _consoleEngine;
+
+    public:
         unsigned int Width = 0;
         unsigned int Height = 0;
 
         Colour* Pixels = nullptr;
         size_t PixelCount = 0;
+
+    public:
+
+        Sprite(ConsoleEngine& consoleEngine) :
+            _consoleEngine(consoleEngine)
+        {
+        };
+
+
+    public:
+
+        void DrawSprite(int x, int y) const
+        {
+            for (size_t spriteX = 0; spriteX < Width; spriteX++)
+            {
+                for (size_t spriteY = 0; spriteY < Height; spriteY++)
+                {
+                    size_t pixelDataIndexer = spriteX + Width * spriteY;
+
+                    Colour& colour = Pixels[pixelDataIndexer];
+
+                    _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
+                };
+            };
+        };
+
+
+        void DrawSprite(int x, int y, int xOffset, int yOffset, int width, int height) const
+        {
+
+            for (size_t spriteX = xOffset; spriteX < width; spriteX++)
+            {
+                for (size_t spriteY = yOffset; spriteY < height; spriteY++)
+                {
+
+                    size_t pixelDataIndexer = spriteX + Width * spriteY;
+
+                    Colour& colour = Pixels[pixelDataIndexer];
+
+                    _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
+                };
+            };
+
+        };
+
+
+        void DrawSpriteChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& chromaColour) const
+        {
+
+            for (size_t spriteX = 0; spriteX < width - xOffset; spriteX++)
+            {
+                for (size_t spriteY = 0; spriteY < height - yOffset; spriteY++)
+                {
+                    size_t pixelDataIndexer = (spriteX + xOffset) + Width * (spriteY + yOffset);
+
+                    Colour& colour = Pixels[pixelDataIndexer];
+
+                    if (colour == chromaColour)
+                        continue;
+
+                    _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
+                };
+            };
+
+        };
+
+
+        void DrawSpriteColourChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& spriteolour, const Colour& chromaColour) const
+        {
+
+            for (size_t spriteX = 0; spriteX < width - xOffset; spriteX++)
+            {
+                for (size_t spriteY = 0; spriteY < height - yOffset; spriteY++)
+                {
+                    size_t pixelDataIndexer = (spriteX + xOffset) + Width * (spriteY + yOffset);
+
+                    Colour& colour = Pixels[pixelDataIndexer];
+
+                    if (colour == chromaColour)
+                        continue;
+
+                    _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(spriteolour), false);
+                };
+            };
+
+        };
+
+
     };
 
 private:
@@ -31,7 +124,8 @@ private:
 public:
 
     DisplayBitmapScene(ConsoleEngine& consoleEngine) :
-        _consoleEngine(consoleEngine)
+        _consoleEngine(consoleEngine),
+        _sprite(consoleEngine)
     {
         std::ifstream fontFile("Resources\\Fixedsys16x28.bmp",
                                // Read/open the file in binary mode (handles \n\r characters differently, and more)
@@ -148,104 +242,34 @@ public:
     };
 
 
-
-    void DrawSprite(int x, int y, const Sprite& sprite)
+    void DrawTextFromSprite(int x, int y, std::wstring text, Sprite& sprite, ConsoleEngine::ConsoleColour textColor = ConsoleEngine::ConsoleColour::WHITE)
     {
-        for (size_t spriteX = 0; spriteX < sprite.Width; spriteX++)
+        int glyphWidth = 16;
+        int glyphHeight = 28;
+
+        for (size_t a = 0; a < text.length(); a++)
         {
-            for (size_t spriteY = 0; spriteY < sprite.Height; spriteY++)
-            {
-                size_t pixelDataIndexer = spriteX + sprite.Width * spriteY;
+            const wchar_t& character2 = text[a];
 
-                Colour& colour = sprite.Pixels[pixelDataIndexer];
+            int glyphX = character2 % 32;
+            int glyphY = (character2 / 32) - 1;
 
-                _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
-            };
-        };
-    };
+            int x1 = (glyphX * glyphWidth);
+            int y1 = (glyphY * glyphHeight);
 
+            int x2 = (x1 + glyphWidth);
+            int y2 = y1 + glyphHeight;
 
-    void DrawSprite(int x, int y, int xOffset, int yOffset, int width, int height, const Sprite& sprite)
-    {
-
-        for (size_t spriteX = xOffset; spriteX < width; spriteX++)
-        {
-            for (size_t spriteY = yOffset; spriteY < height; spriteY++)
-            {
-
-                size_t pixelDataIndexer = spriteX + sprite.Width * spriteY;
-
-                Colour& colour = sprite.Pixels[pixelDataIndexer];
-
-                _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
-            };
-        };
-
-    };
-
-
-    void DrawSpriteChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& chromaColour, const Sprite& sprite)
-    {
-
-        for (size_t spriteX = 0; spriteX < width - xOffset; spriteX++)
-        {
-            for (size_t spriteY = 0; spriteY < height - yOffset; spriteY++)
-            {
-                size_t pixelDataIndexer = (spriteX + xOffset) + sprite.Width * (spriteY + yOffset);
-
-                Colour& colour = sprite.Pixels[pixelDataIndexer];
-
-                if (colour == chromaColour)
-                    continue;
-
-                _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
-            };
-        };
-
-    };
-
-
-    void DrawSpriteColourChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& spriteolour, const Colour& chromaColour, const Sprite& sprite)
-    {
-
-        for (size_t spriteX = 0; spriteX < width - xOffset; spriteX++)
-        {
-            for (size_t spriteY = 0; spriteY < height - yOffset; spriteY++)
-            {
-                size_t pixelDataIndexer = (spriteX + xOffset) + sprite.Width * (spriteY + yOffset);
-
-                Colour& colour = sprite.Pixels[pixelDataIndexer];
-
-                if (colour == chromaColour)
-                    continue;
-
-                _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(spriteolour), false);
-            };
-        };
-
+            _sprite.DrawSpriteColourChromaKey(x + (a * glyphWidth), y, x1, y1, x2, y2, { 255, 0, 255 }, { 255, 255, 255 });
+        }
     };
 
 
     virtual void DrawScene() override
     {
-        int spriteXPos = 0;
+        int spriteXPos = 75;
         int spriteYPos = 0;
 
-        int glyphWidth = 16;
-        int glyphHeight = 28;
-
-
-        wchar_t character2 = L'z';
-
-        int glyphX = character2 % 32;
-        int glyphY = (character2 / 32) - 1;
-
-        int x1 = glyphX * glyphWidth;
-        int y1 = glyphY * glyphHeight;
-
-        int x2 = x1 + glyphWidth;
-        int y2 = y1 + glyphHeight;
-
-        DrawSpriteColourChromaKey(spriteXPos, spriteYPos, x1, y1, x2, y2, { 255, 0, 255 }, { 255, 255, 255 }, _sprite);
+        DrawTextFromSprite(spriteXPos, spriteYPos, L"Text text", _sprite);
     };
 };
