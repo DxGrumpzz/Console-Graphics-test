@@ -183,8 +183,37 @@ public:
     };
     
 
+    void DrawSpriteChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& chromaColour, const Sprite& sprite)
+    {
+
+        for (size_t spriteX = xOffset; spriteX < width; spriteX++)
+        {
+            for (size_t spriteY = yOffset; spriteY < height; spriteY++)
+            {
+
+                size_t pixelDataIndexer = spriteX + sprite.Width * spriteY;
+
+                Colour& colour = sprite.Pixels[pixelDataIndexer];
+
+                if (colour == chromaColour)
+                    continue;
+
+                _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
+            };
+        };
+
+    };
+
     virtual void DrawScene() override
     {
+        for (size_t x = 0; x < _consoleEngine.ConsoleWindowWidth; x++)
+        {
+            for (size_t y = 0; y < _consoleEngine.ConsoleWindowHeight; y++)
+            {
+                _consoleEngine.SetConsolePixel(x, y);
+            };
+        };
+
         int spriteXPos = 100;
         int spriteYPos = 5;
 
