@@ -4,22 +4,17 @@
 
 #include "IScene.hpp"
 #include "ConsoleEngine.hpp"
+#include "Colour.hpp"
 
 class DisplayBitmapScene : public IScene
 {
 private:
 
-    struct Colour
-    {
-        uint8_t Red;
-        uint8_t Green;
-        uint8_t Blue;
-    };
 
 private:
     ConsoleEngine& _consoleEngine;
 
-    Colour* _pixelData;
+    Colour* _pixelData = nullptr;
     size_t _pixelDataCount;
 
     unsigned int _bmpWidth = 0;
