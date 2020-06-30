@@ -13,14 +13,14 @@ class DisplayBitmapScene : public IScene
 private:
 
     struct Sprite
-    { 
+    {
         unsigned int Width = 0;
         unsigned int Height = 0;
 
         Colour* Pixels = nullptr;
         size_t PixelCount = 0;
     };
-    
+
 private:
     ConsoleEngine& _consoleEngine;
 
@@ -162,7 +162,7 @@ public:
             };
         };
     };
-    
+
 
     void DrawSprite(int x, int y, int xOffset, int yOffset, int width, int height, const Sprite& sprite)
     {
@@ -181,7 +181,7 @@ public:
         };
 
     };
-    
+
 
     void DrawSpriteChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& chromaColour, const Sprite& sprite)
     {
@@ -204,16 +204,30 @@ public:
 
     };
 
-    virtual void DrawScene() override
+    void DrawSpriteColourChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& spriteolour, const Colour& chromaColour, const Sprite& sprite)
     {
-        for (size_t x = 0; x < _consoleEngine.ConsoleWindowWidth; x++)
+
+        for (size_t spriteX = xOffset; spriteX < width; spriteX++)
         {
-            for (size_t y = 0; y < _consoleEngine.ConsoleWindowHeight; y++)
+            for (size_t spriteY = yOffset; spriteY < height; spriteY++)
             {
-                _consoleEngine.SetConsolePixel(x, y);
+
+                size_t pixelDataIndexer = spriteX + sprite.Width * spriteY;
+
+                Colour& colour = sprite.Pixels[pixelDataIndexer];
+
+                if (colour == chromaColour)
+                    continue;
+
+                _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(spriteolour), false);
             };
         };
 
+    };
+
+
+    virtual void DrawScene() override
+    {
         int spriteXPos = 100;
         int spriteYPos = 5;
 
@@ -224,15 +238,12 @@ public:
         int glyphY = 1;
 
 
-        // DrawSprite(spriteXPos, spriteYPos, _sprite);         
-
         int x1 = glyphX * glyphWidth;
         int y1 = glyphY * glyphHeight;
 
         int x2 = x1 + glyphWidth;
         int y2 = y1 + glyphHeight;
 
-        DrawSprite(spriteXPos, spriteYPos, x1, y1, x2, y2, _sprite);
-        // DrawSprite(); 
+        DrawSpriteColourChromaKey(spriteXPos, spriteYPos, x1, y1, x2, y2, { 255, 0, 255 }, { 255, 255,255 }, _sprite);
     };
 };
