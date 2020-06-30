@@ -136,10 +136,13 @@ public:
 
     };
 
+
+
     virtual void DrawScene() override
     {
         int imageXPos = 5;
         int imageYPos = 5;
+
 
         for (size_t x = 0; x < _bmpWidth; x++)
         {
@@ -149,62 +152,9 @@ public:
 
                 Colour& colour = _pixelData[pixelDataIndexer];
 
-                if (colour.Red   == 255 &&
-                    colour.Green == 255 &&
-                    colour.Blue  == 255)
-                {
-                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::WHITE, false);
-                }
-                else if (colour.Red   == 0 &&
-                         colour.Green == 0 &&
-                         colour.Blue  == 0)
-                {
-                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::BLACK, false);
-                }
-                else
-                {
-                    int s = 0;
-                };
+                _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ColourTransformer::RGBToConsoleColour(colour), false);
             };
         };
 
-
-        /*
-        size_t pixelDataIndexer = 0;
-        for (size_t y = 0; y < _bmpHeight - 1; y += 4)
-        {
-            for (size_t x = 0; x < _bmpWidth - 1; x += 4)
-            {
-                uint8_t red = _pixelData[pixelDataIndexer];
-                uint8_t green = _pixelData[pixelDataIndexer] >> 8;
-                uint8_t blue = _pixelData[pixelDataIndexer] >> 8 * 2;
-
-                if (red == 255 &&
-                    green == 255 &&
-                    blue == 255)
-                {
-                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::RED, false);
-                }
-                else if (red == 0 &&
-                         green == 0 &&
-                         blue == 0)
-                {
-                    _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ConsoleEngine::ConsoleColour::GREEN, false);
-                }
-                else
-                {
-                    int s = 0;
-                };
-
-                pixelDataIndexer++;
-            };
-        };
-        */
-
-
-        //_consoleEngine.DrawConsoleText(0, 0, L"Bitmap scene");
     };
-
-
-
 };

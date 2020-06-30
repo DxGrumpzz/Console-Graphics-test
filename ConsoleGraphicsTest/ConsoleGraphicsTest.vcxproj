@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Colour.hpp" />
+    <ClInclude Include="ColourTransformer.hpp" />
     <ClInclude Include="DisplayBitmapScene.hpp" />
     <ClCompile Include="Main.cpp" />
     <ClInclude Include="Math.hpp" />
