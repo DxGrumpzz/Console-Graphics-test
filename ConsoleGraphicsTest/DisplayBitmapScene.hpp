@@ -7,6 +7,7 @@
 #include "Colour.hpp"
 #include "ColourTransformer.hpp"
 
+
 class DisplayBitmapScene : public IScene
 {
 private:
@@ -146,6 +147,7 @@ public:
 
     };
 
+
     void DrawSprite(int x, int y, const Sprite& sprite)
     {
         for (size_t spriteX = 0; spriteX < sprite.Width; spriteX++)
@@ -160,14 +162,48 @@ public:
             };
         };
     };
+    
 
+    void DrawSprite(int x, int y, int xOffset, int yOffset, int width, int height, const Sprite& sprite)
+    {
+
+        for (size_t spriteX = xOffset; spriteX < width; spriteX++)
+        {
+            for (size_t spriteY = yOffset; spriteY < height; spriteY++)
+            {
+
+                size_t pixelDataIndexer = spriteX + sprite.Width * spriteY;
+
+                Colour& colour = sprite.Pixels[pixelDataIndexer];
+
+                _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
+            };
+        };
+
+    };
+    
 
     virtual void DrawScene() override
     {
-        int imageXPos = 5;
-        int imageYPos = 5;
+        int spriteXPos = 100;
+        int spriteYPos = 5;
 
-        DrawSprite(imageXPos, imageYPos, _sprite);         
+        int glyphWidth = 16;
+        int glyphHeight = 28;
 
+        int glyphX = 1;
+        int glyphY = 1;
+
+
+        // DrawSprite(spriteXPos, spriteYPos, _sprite);         
+
+        int x1 = glyphX * glyphWidth;
+        int y1 = glyphY * glyphHeight;
+
+        int x2 = x1 + glyphWidth;
+        int y2 = y1 + glyphHeight;
+
+        DrawSprite(spriteXPos, spriteYPos, x1, y1, x2, y2, _sprite);
+        // DrawSprite(); 
     };
 };
