@@ -148,6 +148,7 @@ public:
     };
 
 
+
     void DrawSprite(int x, int y, const Sprite& sprite)
     {
         for (size_t spriteX = 0; spriteX < sprite.Width; spriteX++)
@@ -186,12 +187,11 @@ public:
     void DrawSpriteChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& chromaColour, const Sprite& sprite)
     {
 
-        for (size_t spriteX = xOffset; spriteX < width; spriteX++)
+        for (size_t spriteX = 0; spriteX < width - xOffset; spriteX++)
         {
-            for (size_t spriteY = yOffset; spriteY < height; spriteY++)
+            for (size_t spriteY = 0; spriteY < height - yOffset; spriteY++)
             {
-
-                size_t pixelDataIndexer = spriteX + sprite.Width * spriteY;
+                size_t pixelDataIndexer = (spriteX + xOffset) + sprite.Width * (spriteY + yOffset);
 
                 Colour& colour = sprite.Pixels[pixelDataIndexer];
 
@@ -204,15 +204,15 @@ public:
 
     };
 
+
     void DrawSpriteColourChromaKey(int x, int y, int xOffset, int yOffset, int width, int height, const Colour& spriteolour, const Colour& chromaColour, const Sprite& sprite)
     {
 
-        for (size_t spriteX = xOffset; spriteX < width; spriteX++)
+        for (size_t spriteX = 0; spriteX < width - xOffset; spriteX++)
         {
-            for (size_t spriteY = yOffset; spriteY < height; spriteY++)
+            for (size_t spriteY = 0; spriteY < height - yOffset; spriteY++)
             {
-
-                size_t pixelDataIndexer = spriteX + sprite.Width * spriteY;
+                size_t pixelDataIndexer = (spriteX + xOffset) + sprite.Width * (spriteY + yOffset);
 
                 Colour& colour = sprite.Pixels[pixelDataIndexer];
 
