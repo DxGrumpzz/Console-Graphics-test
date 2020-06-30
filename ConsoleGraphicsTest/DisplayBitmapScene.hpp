@@ -5,6 +5,7 @@
 #include "IScene.hpp"
 #include "ConsoleEngine.hpp"
 #include "Colour.hpp"
+#include "ColourTransformer.hpp"
 
 class DisplayBitmapScene : public IScene
 {
