@@ -29,81 +29,87 @@ public:
     DisplayBitmapScene(ConsoleEngine& consoleEngine) :
         _consoleEngine(consoleEngine)
     {
-        int glpyhWidth = 16;
-        int glpyhHeight = 28;
-
         std::ifstream fontFile("Resources\\Fixedsys16x28.bmp",
                                // Read/open the file in binary mode (handles \n\r characters differently, and more)
                                std::ios::binary |
                                // Move reader head to the end of the file so we can get the size of the file
                                std::ios::ate);
 
+        // Check if file loaded succesfully
         if (fontFile.good() == false)
         {
             throw std::exception("Unable to open file");
         };
 
+        // Get file size
         std::streamsize bufferSize = fontFile.tellg();
+
+        // Restore reader position back to beggining
         fontFile.seekg(0);
 
+        // A buffer that will store the file data
         uint8_t* fileBytes = new uint8_t[bufferSize + 0] { 0 };
 
+        // Read the file into the buffer
         fontFile.read(reinterpret_cast<char*>(fileBytes), bufferSize);
+        fontFile.seekg(0);
 
+        // A header for this bitmap
+        const int headerSize = 14;
+        uint8_t bitmapHeader[headerSize] { 0 };
+        fontFile.read(reinterpret_cast<char*>(bitmapHeader), headerSize);
 
-        uint8_t bitmapHeader[14] { 0 };
-        memcpy_s(bitmapHeader, 14, fileBytes, 14);
-
-
+        // The bitmap's DIB header size
         unsigned int dibHeaderSize = Read4Bytes(&fileBytes[14]);
 
+        // The bitmap's actuall DIB header
         uint8_t* dibHeader = new uint8_t[dibHeaderSize] { 0 };
-        memcpy_s(dibHeader, dibHeaderSize, &fileBytes[14], dibHeaderSize);
 
+        // Read DIB header data from file
+        fontFile.read(reinterpret_cast<char*>(dibHeader), dibHeaderSize);
+
+        // Get image width and height
         _bmpWidth = Read4Bytes(&dibHeader[4]);
         _bmpHeight = Read4Bytes(&dibHeader[8]);
 
-        unsigned int horizontalResolution = Read4Bytes(&fileBytes[38]);
-        unsigned int verticalResolution = Read4Bytes(&fileBytes[42]);
-
-        unsigned short bitsPerPixel = Read2Bytes(&fileBytes[28]);
-
-        unsigned int numberOfColoursInColourPallete = Read2Bytes(&fileBytes[46]);
-
-        unsigned int imageSize = Read4Bytes(&fileBytes[34]);
-
-
+        // An offset starting from the begging to where the pixel data starts
         unsigned int pixelDataOffset = Read4Bytes(&fileBytes[10]);
 
 
-        _pixelDataCount = imageSize;// static_cast<size_t>(_bmpWidth)* static_cast<size_t>(_bmpWHeight);
+        _pixelDataCount = static_cast<size_t>(_bmpWidth) * static_cast<size_t>(_bmpHeight);
 
-        _pixelData = new Colour[_pixelDataCount * sizeof(Colour)] { 0 };
+        // The pixels inside the bitmap
+        _pixelData = new Colour[_pixelDataCount];
+        memset(_pixelData, 0, _pixelDataCount * sizeof(Colour));
 
-
-        uint8_t* pixelDataPointer = &fileBytes[pixelDataOffset];
-
-
+        // Calculate row padding
         int padding = (4 - _bmpWidth % 4) % 4;
 
-        fontFile.seekg(pixelDataOffset);
 
-        for (long long y = _bmpHeight; y >= 0; y--)
+        int pixelIndex = pixelDataOffset;
+
+        // Read the pixel data
+        // Starts from y = _bmpHeight because bitmaps are stored upside vertically 
+        for (long long y = _bmpHeight - 1; y >= 0; y--)
         {
             for (long long x = 0; x < _bmpWidth; x++)
             {
-                int position = x + _bmpWidth * y;
+                // Calculate position of current pixel
+                long long position = x + _bmpWidth * y;
 
-                Colour c;
-                c.Red = fontFile.get();
-                c.Green = fontFile.get();
-                c.Blue = fontFile.get();
+                // Read pixels and create a colour
+                Colour colour;
 
-                _pixelData[position] = c;
+                colour.Red = fileBytes[pixelIndex++];
+                colour.Green = fileBytes[pixelIndex++];
+                colour.Blue = fileBytes[pixelIndex++];
 
+                // Inset the colour into pixels array
+                _pixelData[position] = colour;
             };
 
-            fontFile.seekg(padding, std::ios::cur);
+            // After we finish reading a row move the pixelIndex by the row padding
+            pixelIndex += padding;
         };
 
 
@@ -115,7 +121,7 @@ public:
     };
 
 
-    unsigned int Read4Bytes(const uint8_t const* data)
+    unsigned int Read4Bytes(const uint8_t* data)
     {
         return (data[0] |
                 data[1] << 8 |
@@ -123,7 +129,7 @@ public:
                 data[3] << 8 * 3);
     };
 
-    unsigned short Read2Bytes(const uint8_t const* data)
+    unsigned short Read2Bytes(const uint8_t* data)
     {
         return (data[0] |
                 data[1] << 8);
