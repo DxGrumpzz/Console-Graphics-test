@@ -228,15 +228,17 @@ public:
 
     virtual void DrawScene() override
     {
-        int spriteXPos = 100;
-        int spriteYPos = 5;
+        int spriteXPos = 0;
+        int spriteYPos = 0;
 
         int glyphWidth = 16;
         int glyphHeight = 28;
 
-        int glyphX = 1;
-        int glyphY = 1;
 
+        wchar_t character2 = L'z';
+
+        int glyphX = character2 % 32;
+        int glyphY = (character2 / 32) - 1;
 
         int x1 = glyphX * glyphWidth;
         int y1 = glyphY * glyphHeight;
@@ -244,6 +246,6 @@ public:
         int x2 = x1 + glyphWidth;
         int y2 = y1 + glyphHeight;
 
-        DrawSpriteColourChromaKey(spriteXPos, spriteYPos, x1, y1, x2, y2, { 255, 0, 255 }, { 255, 255,255 }, _sprite);
+        DrawSpriteColourChromaKey(spriteXPos, spriteYPos, x1, y1, x2, y2, { 255, 0, 255 }, { 255, 255, 255 }, _sprite);
     };
 };
