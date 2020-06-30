@@ -11,16 +11,19 @@ class DisplayBitmapScene : public IScene
 {
 private:
 
+    struct Sprite
+    { 
+        unsigned int Width = 0;
+        unsigned int Height = 0;
 
+        Colour* Pixels = nullptr;
+        size_t PixelCount = 0;
+    };
+    
 private:
     ConsoleEngine& _consoleEngine;
 
-    Colour* _pixelData = nullptr;
-    size_t _pixelDataCount;
-
-    unsigned int _bmpWidth = 0;
-    unsigned int _bmpHeight = 0;
-
+    Sprite _sprite;
 
 private:
 
@@ -69,33 +72,33 @@ public:
         fontFile.read(reinterpret_cast<char*>(dibHeader), dibHeaderSize);
 
         // Get image width and height
-        _bmpWidth = Read4Bytes(&dibHeader[4]);
-        _bmpHeight = Read4Bytes(&dibHeader[8]);
+        _sprite.Width = Read4Bytes(&dibHeader[4]);
+        _sprite.Height = Read4Bytes(&dibHeader[8]);
 
         // An offset starting from the begging to where the pixel data starts
         unsigned int pixelDataOffset = Read4Bytes(&fileBytes[10]);
 
 
-        _pixelDataCount = static_cast<size_t>(_bmpWidth) * static_cast<size_t>(_bmpHeight);
+        _sprite.PixelCount = static_cast<size_t>(_sprite.Width) * static_cast<size_t>(_sprite.Height);
 
         // The pixels inside the bitmap
-        _pixelData = new Colour[_pixelDataCount];
-        memset(_pixelData, 0, _pixelDataCount * sizeof(Colour));
+        _sprite.Pixels = new Colour[_sprite.PixelCount];
+        memset(_sprite.Pixels, 0, _sprite.PixelCount * sizeof(Colour));
 
         // Calculate row padding
-        int padding = (4 - _bmpWidth % 4) % 4;
+        int padding = (4 - _sprite.Width % 4) % 4;
 
 
         int pixelIndex = pixelDataOffset;
 
         // Read the pixel data
         // Starts from y = _bmpHeight because bitmaps are stored upside vertically 
-        for (long long y = _bmpHeight - 1; y >= 0; y--)
+        for (long long y = _sprite.Height - 1; y >= 0; y--)
         {
-            for (long long x = 0; x < _bmpWidth; x++)
+            for (long long x = 0; x < _sprite.Width; x++)
             {
                 // Calculate position of current pixel
-                long long position = x + _bmpWidth * y;
+                long long position = x + _sprite.Width * y;
 
                 // Read pixels and create a colour
                 Colour colour;
@@ -105,7 +108,7 @@ public:
                 colour.Blue = fileBytes[pixelIndex++];
 
                 // Inset the colour into pixels array
-                _pixelData[position] = colour;
+                _sprite.Pixels[position] = colour;
             };
 
             // After we finish reading a row move the pixelIndex by the row padding
@@ -143,6 +146,20 @@ public:
 
     };
 
+    void DrawSprite(int x, int y, const Sprite& sprite)
+    {
+        for (size_t spriteX = 0; spriteX < sprite.Width; spriteX++)
+        {
+            for (size_t spriteY = 0; spriteY < sprite.Height; spriteY++)
+            {
+                size_t pixelDataIndexer = spriteX + sprite.Width * spriteY;
+
+                Colour& colour = sprite.Pixels[pixelDataIndexer];
+
+                _consoleEngine.SetConsolePixel(spriteX + x, spriteY + y, ColourTransformer::RGBToConsoleColour(colour), false);
+            };
+        };
+    };
 
 
     virtual void DrawScene() override
@@ -150,18 +167,7 @@ public:
         int imageXPos = 5;
         int imageYPos = 5;
 
-
-        for (size_t x = 0; x < _bmpWidth; x++)
-        {
-            for (size_t y = 0; y < _bmpHeight; y++)
-            {
-                size_t pixelDataIndexer = x + _bmpWidth * y;
-
-                Colour& colour = _pixelData[pixelDataIndexer];
-
-                _consoleEngine.SetConsolePixel(imageXPos + x, imageYPos + y, ColourTransformer::RGBToConsoleColour(colour), false);
-            };
-        };
+        DrawSprite(imageXPos, imageYPos, _sprite);         
 
     };
 };
