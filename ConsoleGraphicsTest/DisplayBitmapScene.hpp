@@ -54,12 +54,12 @@ private:
         void DrawSprite(int x, int y, int xOffset, int yOffset, int width, int height) const
         {
 
-            for (size_t spriteX = xOffset; spriteX < width; spriteX++)
+            for (size_t spriteX = 0; spriteX < width - xOffset; spriteX++)
             {
-                for (size_t spriteY = yOffset; spriteY < height; spriteY++)
+                for (size_t spriteY = 0; spriteY < height - yOffset; spriteY++)
                 {
 
-                    size_t pixelDataIndexer = spriteX + Width * spriteY;
+                    size_t pixelDataIndexer = (spriteX + xOffset) + Width * (spriteY + yOffset);
 
                     Colour& colour = Pixels[pixelDataIndexer];
 
@@ -247,20 +247,43 @@ public:
         int glyphWidth = 16;
         int glyphHeight = 28;
 
+        // A counter in the X direction, used to reset the position of the "writer" back to original starting X position
+        int xPosCounter = 0;
+
         for (size_t a = 0; a < text.length(); a++)
         {
-            const wchar_t& character2 = text[a];
+            // Get current character
+            const wchar_t& character = text[a];
 
-            int glyphX = character2 % 32;
-            int glyphY = (character2 / 32) - 1;
+            // Check if the current character is a newline
+            if (character == L'\n')
+            {
+                // Move to next line 
+                y += glyphHeight;
 
+                // Reset x position counter back to starting position
+                xPosCounter = 0;
+
+                continue;
+            };
+
+            // Find The glyph x and y positions in the sprite sheet
+            int glyphX = character % 32;
+            int glyphY = (character / 32) - 1;
+
+            // The top left position of the glyph in the sprite sheet
             int x1 = (glyphX * glyphWidth);
             int y1 = (glyphY * glyphHeight);
 
+            // The bottom right position of the glyph in the sprite sheet
             int x2 = (x1 + glyphWidth);
             int y2 = y1 + glyphHeight;
 
-            _sprite.DrawSpriteColourChromaKey(x + (a * glyphWidth), y, x1, y1, x2, y2, { 255, 0, 255 }, { 255, 255, 255 });
+            // Draw the character from the sprite sheet
+            _sprite.DrawSpriteColourChromaKey(x + (xPosCounter * glyphWidth), y, x1, y1, x2, y2, { 255, 0, 255 }, { 255, 255, 255 });
+
+            // Move to next x position
+            xPosCounter++;
         }
     };
 
@@ -270,6 +293,6 @@ public:
         int spriteXPos = 75;
         int spriteYPos = 0;
 
-        DrawTextFromSprite(spriteXPos, spriteYPos, L"Text text", _sprite);
+        DrawTextFromSprite(spriteXPos, spriteYPos, L"Text\nText2\nText123", _sprite);
     };
 };
