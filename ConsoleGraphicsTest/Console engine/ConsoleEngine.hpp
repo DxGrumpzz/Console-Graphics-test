@@ -230,27 +230,21 @@ public:
         CONSOLE_SCREEN_BUFFER_INFO s = { 0 };
         GetConsoleScreenBufferInfo(_consoleOutputHandle, &s);
 
-
+        // disable window resize, and maximize 
         SetWindowLongW(_consoleHWND, GWL_STYLE, GetWindowLong(_consoleHWND, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
 
 
-        /*
-        DWORD previousMode;
-        GetConsoleMode(_consoleInputHandle, &previousMode);
-        SetConsoleMode(_consoleInputHandle, ENABLE_EXTENDED_FLAGS |
-                       (previousMode & ~ENABLE_QUICK_EDIT_MODE));*/
-
+        // Set console extended flag to allow mouse inputs and such
         SetConsoleMode(_consoleInputHandle, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
-
-
-        // Center the console on the monitor
-        CenterConsoleWindow(_consoleHWND, actualConsoleWindowSize.X + ConsoleWindowWidth, actualConsoleWindowSize.Y + ConsoleWindowHeight);
 
         // Hide the console's cursor (Blinking underscore thing )
         HideConsoleCursor(_consoleOutputHandle);
 
         // Get the actuall size of the window
         GetWindowRect(_consoleHWND, &_consoleWindowActuallRect);
+        
+        // Center the console on the monitor
+        CenterConsoleWindow(_consoleHWND, _consoleWindowActuallRect.right -_consoleWindowActuallRect.left, _consoleWindowActuallRect.bottom - _consoleWindowActuallRect.top);
     };
 
 
@@ -683,7 +677,7 @@ private:
     /// </summary>
     /// <param name="consoleHWND"> The console's window handle </param>
     /// <param name="consoleWidth"> The console's window width </param>
-    /// <param name="consoleHeight" The console's window height ></param>
+    /// <param name="consoleHeight"> The console's window height </param>
     void CenterConsoleWindow(HWND consoleHWND, int consoleWidth, int consoleHeight)
     {
         // Get a handle to this monitor
@@ -700,7 +694,7 @@ private:
         const long monitorHeight = monitorInfo.rcWork.bottom;
 
         // Center the window on screen
-        SetWindowPos(consoleHWND, NULL, (monitorWidth / 2) - consoleWidth, (monitorHeight / 2) - consoleHeight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        SetWindowPos(consoleHWND, NULL, (monitorWidth / 2) - (consoleWidth/2), (monitorHeight / 2) - (consoleHeight / 2), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
     };
 
 
